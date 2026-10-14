@@ -1,0 +1,741 @@
+<!doctype html>
+<html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><style>:root{color-scheme:light}body{margin:0}</style></head><body>
+<title>Defensores do Corpo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap">
+<style>
+/* Layout: mapa de fases em coluna única (como um vaso sanguíneo), cartas e desafios ocupam uma coluna de leitura de 760px.
+   Tokens: azul-defesa (nossas células), verde-anticorpo (acerto), magenta-patógeno (erro/inimigo), ouro (XP e estrelas). */
+:root{
+  --bg:#E9F0F9; --surface:#FFFFFF; --surface-2:#F2F6FC; --ink:#0E2142; --ink-2:#506482; --line:#CFDBEC;
+  --def:#2563EB; --def-deep:#1A47B3; --def-soft:#DCE8FF; --on-def:#FFFFFF;
+  --ok:#0FA37F; --ok-deep:#097A5F; --ok-soft:#D9F5EC;
+  --bad:#E03A5C; --bad-deep:#AE2343; --bad-soft:#FDE2E8;
+  --gold:#F2A900; --gold-deep:#B97F00; --gold-soft:#FFF1C7;
+  --f-display:"Fredoka","Arial Rounded MT Bold","Trebuchet MS",system-ui,sans-serif;
+  --f-body:"Nunito","Segoe UI",system-ui,-apple-system,sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#0A1426; --surface:#122039; --surface-2:#18294A; --ink:#E7EEFB; --ink-2:#9DB0CF; --line:#27395E;
+    --def:#5E8DFF; --def-deep:#3763D6; --def-soft:#1B2F5C; --on-def:#07142E;
+    --ok:#2BD1A3; --ok-deep:#169874; --ok-soft:#0F3A33;
+    --bad:#FF6B88; --bad-deep:#C7405E; --bad-soft:#431A2A;
+    --gold:#FFC83D; --gold-deep:#C99300; --gold-soft:#3F3314;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0A1426; --surface:#122039; --surface-2:#18294A; --ink:#E7EEFB; --ink-2:#9DB0CF; --line:#27395E;
+  --def:#5E8DFF; --def-deep:#3763D6; --def-soft:#1B2F5C; --on-def:#07142E;
+  --ok:#2BD1A3; --ok-deep:#169874; --ok-soft:#0F3A33;
+  --bad:#FF6B88; --bad-deep:#C7405E; --bad-soft:#431A2A;
+  --gold:#FFC83D; --gold-deep:#C99300; --gold-soft:#3F3314;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html,body{min-height:100%}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;-webkit-font-smoothing:antialiased;padding-inline:16px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,[tabindex]:focus-visible{outline:3px solid var(--gold);outline-offset:2px}
+h1,h2,h3{font-family:var(--f-display);font-weight:600;line-height:1.15;margin:0;text-wrap:balance}
+p{margin:0}
+b,strong{font-weight:800}
+.shell{max-width:760px;margin-inline:auto;padding-block:14px 48px;display:flex;flex-direction:column;gap:18px}
+
+/* barra superior */
+.hud{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:700;font-size:1.05rem;letter-spacing:.01em;margin-right:auto;display:flex;align-items:center;gap:8px}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:4px 12px;font-weight:800;font-size:.88rem;font-variant-numeric:tabular-nums}
+.pill svg{width:16px;height:16px}
+.ghost{background:none;border:2px solid var(--line);color:var(--ink-2);border-radius:999px;padding:4px 12px;font-weight:700;font-size:.85rem}
+.ghost:hover{border-color:var(--def);color:var(--def)}
+
+/* botões “chunky” */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:14px;padding:13px 22px;font-family:var(--f-display);font-weight:600;font-size:1.05rem;letter-spacing:.02em;background:var(--def);color:var(--on-def);box-shadow:0 4px 0 var(--def-deep);transition:transform .08s,box-shadow .08s}
+.btn:hover{filter:brightness(1.06)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--def-deep)}
+.btn.alt{background:var(--surface);color:var(--def);border:2px solid var(--line);box-shadow:0 4px 0 var(--line)}
+.btn.alt:active{box-shadow:0 1px 0 var(--line)}
+.btn.good{background:var(--ok);color:#fff;box-shadow:0 4px 0 var(--ok-deep)}
+.btn.bad{background:var(--bad);color:#fff;box-shadow:0 4px 0 var(--bad-deep)}
+.btn[disabled]{opacity:.45;pointer-events:none}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+.muted{color:var(--ink-2)}
+.chip{display:inline-flex;align-items:center;font-family:var(--f-display);font-weight:600;font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;background:var(--def-soft);color:var(--def);border-radius:8px;padding:3px 9px}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:20px}
+
+/* HOME */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center;padding:20px}
+.hero h1{font-size:clamp(1.7rem,6vw,2.4rem)}
+.hero p{margin-top:6px;color:var(--ink-2)}
+.howto{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.howto div{background:var(--surface-2);border-radius:14px;padding:12px 14px;font-size:.92rem}
+.howto b{display:block;font-family:var(--f-display);font-weight:600;color:var(--def);margin-bottom:2px}
+.stats{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.rank{font-family:var(--f-display);font-weight:600}
+.progress{height:12px;background:var(--surface-2);border:2px solid var(--line);border-radius:99px;overflow:hidden;flex:1;min-width:120px}
+.progress i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .4s}
+.map{display:flex;flex-direction:column;gap:14px;position:relative;padding-left:0}
+.node{position:relative;display:grid;grid-template-columns:64px minmax(0,1fr) auto;gap:14px;align-items:center;text-align:left;width:100%;background:var(--surface);border:2px solid var(--line);border-bottom-width:5px;border-radius:20px;padding:12px 16px 12px 12px;transition:transform .08s,border-color .15s}
+.node:not([disabled]):hover{border-color:var(--def);transform:translateY(-1px)}
+.node:not([disabled]):active{transform:translateY(2px)}
+.node[disabled]{opacity:.55;cursor:not-allowed}
+.node .badge{width:64px;height:64px;border-radius:50%;display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:1.25rem;background:var(--def-soft);color:var(--def);border:3px solid var(--def)}
+.node.done .badge{background:var(--ok-soft);color:var(--ok-deep);border-color:var(--ok)}
+.node.next{border-color:var(--def);box-shadow:0 0 0 4px var(--def-soft)}
+.node.next .badge{background:var(--def);color:var(--on-def)}
+.node h3{font-size:1.12rem}
+.node .sub{font-size:.9rem;color:var(--ink-2);margin-top:2px}
+.stars{display:flex;gap:2px}
+.stars svg{width:20px;height:20px}
+.star-on{fill:var(--gold)}
+.star-off{fill:var(--line)}
+.node.boss{border-color:var(--bad)}
+.node.boss .badge{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.node.boss.next{box-shadow:0 0 0 4px var(--bad-soft)}
+.tools{display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+
+/* CARTAS */
+.lhead{display:flex;align-items:center;gap:12px}
+.pips{display:flex;gap:6px;flex:1}
+.pips i{flex:1;height:10px;border-radius:99px;background:var(--line)}
+.pips i.on{background:var(--def)}
+.pips i.cur{background:var(--gold)}
+.lcard{display:flex;flex-direction:column;gap:0;overflow:hidden}
+.shot{position:relative;display:block;width:100%;border:0;padding:0;background:var(--surface-2);line-height:0}
+.shot img{width:100%;height:auto;display:block;aspect-ratio:16/9;object-fit:cover}
+.shot span{position:absolute;right:10px;bottom:10px;line-height:1.2;background:rgba(14,33,66,.78);color:#fff;font-weight:700;font-size:.78rem;padding:5px 10px;border-radius:99px}
+.shot.noimg{display:none}
+.ltxt{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px}
+.eyebrow{font-family:var(--f-display);font-weight:600;font-size:.8rem;letter-spacing:.1em;text-transform:uppercase;color:var(--def)}
+.ltxt h2{font-size:1.6rem}
+.ltxt .body{font-size:1.08rem;max-width:62ch}
+.ltxt .body b{color:var(--def)}
+.say{display:flex;gap:12px;align-items:flex-end}
+.bubble{position:relative;background:var(--def-soft);border-radius:18px 18px 18px 4px;padding:12px 16px;font-weight:600;font-size:.98rem;flex:1}
+.prova{border:2px dashed var(--gold);background:var(--gold-soft);border-radius:16px;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.prova .tag{font-family:var(--f-display);font-weight:700;letter-spacing:.08em;text-transform:uppercase;font-size:.8rem;color:var(--gold-deep)}
+.prova .ans{font-weight:800;color:var(--ok-deep)}
+.prova button{align-self:flex-start;border:0;background:var(--gold);color:#2b1d00;font-family:var(--f-display);font-weight:600;border-radius:10px;padding:6px 14px;box-shadow:0 3px 0 var(--gold-deep)}
+.lnav{display:flex;gap:12px;justify-content:space-between;flex-wrap:wrap}
+.lightbox{position:fixed;inset:0;background:rgba(5,12,28,.88);display:grid;place-items:center;padding:16px;z-index:50;cursor:zoom-out}
+.lightbox img{max-width:100%;max-height:100%;border-radius:12px}
+
+/* DESAFIOS */
+.qtop{display:flex;align-items:center;gap:12px}
+.x{width:38px;height:38px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center;color:var(--ink-2);flex:none}
+.x.armed{background:var(--bad-soft);border-color:var(--bad);color:var(--bad)}
+.x svg{width:18px;height:18px}
+.bar{flex:1;height:14px;background:var(--surface);border:2px solid var(--line);border-radius:99px;overflow:hidden}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:99px;transition:width .35s}
+.hearts{display:flex;gap:3px;flex:none}
+.hearts svg{width:24px;height:24px}
+.h-on{fill:var(--bad)}
+.h-off{fill:var(--line)}
+.qmeta{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.combo{font-family:var(--f-display);font-weight:700;color:var(--gold-deep);font-size:.95rem}
+.qtext{font-size:clamp(1.25rem,4.4vw,1.6rem);max-width:30ch}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;gap:14px;align-items:center;text-align:left;background:var(--surface);border:2px solid var(--line);border-bottom-width:5px;border-radius:16px;padding:13px 16px;font-weight:700;font-size:1.02rem;transition:transform .08s,border-color .15s}
+.opt .k{flex:none;width:30px;height:30px;border-radius:9px;border:2px solid var(--line);display:grid;place-items:center;font-family:var(--f-display);font-size:.9rem;color:var(--ink-2)}
+.opt:not([disabled]):hover{border-color:var(--def);background:var(--def-soft)}
+.opt:not([disabled]):active{transform:translateY(2px)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.right .k{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft);animation:shake .35s}
+.opt.wrong .k{background:var(--bad);border-color:var(--bad);color:#fff}
+.opt[disabled]{cursor:default}
+.match{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px 14px}
+.match .col{display:flex;flex-direction:column;gap:10px;min-width:0}
+.mbtn{background:var(--surface);border:2px solid var(--line);border-bottom-width:5px;border-radius:14px;padding:12px;font-weight:700;font-size:.95rem;text-align:left;min-height:64px}
+.mbtn.sel{border-color:var(--def);background:var(--def-soft)}
+.mbtn.ok{border-color:var(--ok);background:var(--ok-soft);pointer-events:none}
+.mbtn.no{border-color:var(--bad);background:var(--bad-soft);animation:shake .35s}
+.sortcard{background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:22px 20px;font-family:var(--f-display);font-weight:600;font-size:1.25rem;text-align:center;min-height:110px;display:grid;place-items:center}
+.sortcard.shake{animation:shake .35s;border-color:var(--bad)}
+.sortcard.pop{animation:pop .25s}
+.buckets{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.bucket{border:0;border-radius:16px;padding:16px 10px;font-family:var(--f-display);font-weight:600;font-size:1.02rem;background:var(--def);color:var(--on-def);box-shadow:0 4px 0 var(--def-deep)}
+.bucket:nth-child(2){background:var(--gold);color:#2b1d00;box-shadow:0 4px 0 var(--gold-deep)}
+.bucket:active{transform:translateY(3px);box-shadow:0 1px 0 var(--def-deep)}
+.hint{min-height:1.4em;font-weight:700;color:var(--bad);text-align:center}
+.order-zone{display:flex;flex-direction:column;gap:10px}
+.order-label{font-family:var(--f-display);font-weight:600;font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2)}
+.slot{display:flex;flex-direction:column;gap:8px;min-height:60px;padding:10px;border:2px dashed var(--line);border-radius:16px}
+.chipstep{display:flex;gap:10px;align-items:center;text-align:left;background:var(--surface);border:2px solid var(--line);border-bottom-width:4px;border-radius:12px;padding:10px 12px;font-weight:700;font-size:.97rem;width:100%}
+.chipstep .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--def);color:var(--on-def);display:grid;place-items:center;font-family:var(--f-display);font-size:.85rem}
+.chipstep.right{border-color:var(--ok);background:var(--ok-soft)}
+.chipstep.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.fb{position:sticky;bottom:calc(8px + env(safe-area-inset-bottom,0px));border-radius:20px;padding:16px 18px;display:flex;flex-direction:column;gap:10px;border:2px solid;animation:rise .25s}
+.fb.ok{background:var(--ok-soft);border-color:var(--ok)}
+.fb.no{background:var(--bad-soft);border-color:var(--bad)}
+.fb h3{font-size:1.25rem}
+.fb.ok h3{color:var(--ok-deep)}
+.fb.no h3{color:var(--bad-deep)}
+.fb .why b{color:inherit}
+.fb ol{margin:6px 0 0;padding-left:1.3em}
+.boss-head{display:flex;align-items:center;gap:14px}
+.hp{flex:1;display:flex;flex-direction:column;gap:5px}
+.hp small{font-family:var(--f-display);font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--bad)}
+.hp .bar i{background:var(--bad)}
+.timer{height:8px;border-radius:99px;background:var(--surface);border:2px solid var(--line);overflow:hidden}
+.timer i{display:block;height:100%;background:var(--gold);width:100%}
+
+/* RESULTADO */
+.result{display:flex;flex-direction:column;align-items:center;text-align:center;gap:16px;padding:26px 20px}
+.result h1{font-size:clamp(1.7rem,6vw,2.2rem)}
+.stars.big{gap:8px}
+.stars.big svg{width:56px;height:56px}
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;width:100%}
+.tile{background:var(--surface-2);border-radius:14px;padding:12px 8px}
+.tile b{display:block;font-family:var(--f-display);font-size:1.5rem;font-variant-numeric:tabular-nums}
+.tile span{font-size:.82rem;color:var(--ink-2);font-weight:700}
+.review{width:100%;text-align:left;display:flex;flex-direction:column;gap:8px}
+.review h3{font-size:1.05rem}
+.review li{background:var(--surface-2);border-radius:12px;padding:10px 12px;font-size:.95rem;list-style:none}
+.review ul{margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+@keyframes pop{0%{transform:scale(.94)}100%{transform:scale(1)}}
+@keyframes rise{0%{transform:translateY(14px);opacity:0}100%{transform:none;opacity:1}}
+@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(-4px)}}
+.bob{animation:bob 2.4s ease-in-out infinite}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:560px){
+  .hero{grid-template-columns:1fr;justify-items:start}
+  .howto{grid-template-columns:1fr}
+  .node{grid-template-columns:52px minmax(0,1fr)}
+  .node .badge{width:52px;height:52px;font-size:1.05rem}
+  .node .stars{grid-column:2}
+  .match{gap:8px}
+  .tiles{grid-template-columns:1fr 1fr 1fr}
+}
+</style>
+
+<div class="shell">
+  <header class="hud" id="hud"></header>
+  <main id="app"></main>
+</div>
+<div id="lightbox" class="lightbox" data-act="unzoom" hidden><img alt="Slide original ampliado" id="lbimg"></div>
+
+<script>
+(function(){
+'use strict';
+
+/* =====================================================================
+   CONTEÚDO — tudo baseado nos 35 slides do PDF (Cap. 34: Imunidade)
+   ===================================================================== */
+const LEVELS = [
+{ id:'L1', nome:'Resistência do organismo', sub:'Imunidade inata: as primeiras barreiras',
+  cards:[
+   {s:1, t:'Imunidade: o corpo que resiste', x:'O corpo humano resiste a quase todos os tipos de <b>microrganismos</b> e <b>toxinas</b> que tendem a lesar tecidos e órgãos. Essa capacidade se chama <b>imunidade</b>. Este é o Capítulo 34: Resistência do Corpo à Infecção II. Imunidade e Imunidade Inata a Alergia.', d:'Inata é o porteiro que barra todo mundo igual. Adquirida é o detetive: estuda o caso, demora, mas não erra o alvo.', p:'Como se chama a capacidade do corpo de resistir a microrganismos e toxinas?|Imunidade.'},
+   {s:2, t:'Adquirida × inata', x:'Muito da imunidade é <b>adquirida</b>: só se desenvolve depois que o corpo é atacado por bactérias, vírus ou toxinas, e costuma precisar de <b>semanas a meses</b>. Uma parte adicional resulta de processos <b>gerais</b>, não dirigidos a um microrganismo específico: é a <b>imunidade inata</b>.', d:'Qual imunidade vem de mecanismos gerais de defesa? A inata!', p:'Qual tipo de imunidade geralmente precisa de semanas ou meses para se desenvolver após a exposição a um invasor?|Imunidade adquirida.'},
+   {s:3, t:'Mecanismo 1: fagocitose', x:'Primeiro mecanismo inato: <b>fagocitose</b> de bactérias e outros invasores pelos <b>leucócitos</b> e pelas células do sistema dos <b>macrófagos teciduais</b> (descrito no Capítulo 33).', d:'Fagocitose é o meu esporte: bateu bactéria, eu como. Ácido do estômago e pele são meus colegas de plantão.', p:'Qual processo permite aos leucócitos englobar bactérias?|Fagocitose.'},
+   {s:4, t:'Mecanismo 2: ácido e enzimas', x:'Segundo mecanismo: <b>destruição</b> de microrganismos deglutidos pelas <b>secreções ácidas do estômago</b> e pelas <b>enzimas digestivas</b>.', d:'Engoliu bactéria? O estômago resolve com ácido e enzimas.', p:'Qual órgão destrói microrganismos deglutidos por suas secreções ácidas?|Estômago.'},
+   {s:5, t:'Mecanismo 3: a pele', x:'Terceiro mecanismo: <b>resistência da pele</b> à invasão por microrganismos. Ela combina a barreira física do <b>estrato córneo</b>, a ação antimicrobiana do <b>sebo e do suor</b> e a <b>microbiota residente</b> protetora. O quarto mecanismo, os compostos químicos do sangue, vem na próxima fase.', d:'Decore os 4 mecanismos inatos: fagocitose, ácido e enzimas do estômago, pele e compostos químicos do sangue.', p:'Qual estrutura corporal funciona como barreira resistente à invasão de microrganismos?|Pele.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Como se chama a capacidade do corpo de resistir a quase todos os microrganismos e toxinas que tendem a lesá-lo?', o:['Imunidade','Fagocitose','Alergia','Complemento'], a:0, why:'Essa capacidade é chamada <b>imunidade</b>.'},
+   {t:'sort', q:'Inata ou adquirida? Classifique cada afirmação.', b:['Imunidade inata','Imunidade adquirida'],
+    items:[['Resulta de processos gerais, não dirigidos a um microrganismo específico',0],['Só se desenvolve depois que o corpo é atacado',1],['Pode levar de semanas a meses para se desenvolver',1],['Fagocitose por leucócitos e macrófagos',0],['Secreções ácidas do estômago',0],['É dirigida a um agente invasor específico',1]],
+    why:'<b>Inata</b> = defesa geral, já pronta. <b>Adquirida</b> = específica e demora semanas a meses.'},
+   {t:'tf', q:'A imunidade inata precisa de semanas a meses para se desenvolver contra o agente invasor.', a:false, why:'Falso. Quem precisa de semanas a meses é a imunidade <b>adquirida</b>.'},
+   {t:'mc', q:'Qual processo permite aos leucócitos e aos macrófagos teciduais englobar bactérias?', o:['Fagocitose','Lisozima','Imunização','Clonagem'], a:0, why:'<b>Fagocitose</b>: o leucócito engloba e destrói o invasor.'},
+   {t:'mc', q:'Qual órgão destrói microrganismos deglutidos com secreções ácidas e enzimas digestivas?', o:['Estômago','Timo','Baço','Medula óssea'], a:0, why:'O <b>estômago</b> destrói o que foi deglutido com ácido e enzimas.'},
+   {t:'mc', q:'Na resistência da pele, qual estrutura funciona como barreira física à invasão?', o:['Sebo','Estrato córneo','Suor','Microbiota residente'], a:1, why:'O <b>estrato córneo</b> é a barreira física. Sebo, suor e microbiota agem de outros modos (antimicrobiano e protetor).'},
+   {t:'match', q:'Ligue cada mecanismo inato à sua descrição.', p:[['Fagocitose','Leucócitos e macrófagos engolem bactérias'],['Ácido e enzimas','Estômago destrói microrganismos deglutidos'],['Pele','Barreira contra a invasão de microrganismos'],['Compostos do sangue','Se prendem a microrganismos e toxinas e os destroem']], why:'Os 4 mecanismos inatos: fagocitose, ácido e enzimas do estômago, pele e compostos químicos do sangue.'},
+   {t:'mc', q:'Quantos mecanismos da imunidade inata foram listados nos slides?', o:['2','3','4','7'], a:2, why:'São <b>4</b>: fagocitose, ácido e enzimas do estômago, pele e compostos químicos do sangue.'}
+  ]},
+{ id:'L2', nome:'Compostos e células da inata', sub:'Lisozima, polipeptídeos, complemento e NK',
+  cards:[
+   {s:6, t:'Compostos químicos do sangue', x:'Quarto mecanismo inato: certos <b>compostos químicos no sangue</b> se prendem a microrganismos ou toxinas estranhos e os destroem. Os agentes listados são (1) <b>lisozima</b>, (2) polipeptídeos básicos, (3) complemento e (4) linfócitos natural killer. A <b>lisozima</b> é um polissacarídeo mucolítico que ataca bactérias e causa sua dissolução.', d:'Lisozima derrete bactéria.', p:'Qual composto mucolítico promove a dissolução de bactérias?|Lisozima.'},
+   {s:7, t:'Polipeptídeos básicos', x:'(2) <b>Polipeptídeos básicos</b> reagem e inativam certos tipos de bactérias <b>grampositivas</b>.', d:'Complemento são 20 colegas de grupo que só trabalham quando ativados. Lisozima derrete bactéria. A NK é o segurança que não negocia.', p:'Quais compostos inativam determinados tipos de bactérias grampositivas?|Polipeptídeos básicos.'},
+   {s:8, t:'Complemento', x:'(3) O <b>complexo do complemento</b> é um sistema de cerca de <b>20 proteínas</b> que pode ser ativado de vários modos para destruir bactérias.', d:'Pergunta relâmpago: quantas proteínas formam o complemento? 20!', p:'Qual sistema de proteínas plasmáticas pode destruir bactérias após sua ativação?|Complemento.'},
+   {s:9, t:'Linfócitos natural killer', x:'(4) Os <b>linfócitos natural killer</b> (NK) podem reconhecer e destruir <b>células estranhas</b> e até algumas <b>células infectadas</b>.', d:'NK é o segurança que não negocia.', p:'Quais linfócitos reconhecem e destroem células estranhas ou infectadas na imunidade inata?|Natural killer.'},
+   {s:10, t:'Resistência natural entre espécies', x:'A imunidade inata torna o corpo humano resistente a doenças de animais, como algumas infecções virais paralíticas, <b>cólera suína</b>, <b>peste bovina</b> e <b>cinomose</b> (doença viral que mata grande percentual dos cães infectados). Por outro lado, muitos animais inferiores resistem ou são imunes a doenças humanas como <b>poliomielite, caxumba, cólera, sarampo e sífilis</b>.', d:'Qual doença humana de origem viral é exemplo de resistência em animais inferiores? Pólio!', p:'Qual doença viral dos cães é citada como exemplo de resistência humana natural?|Cinomose canina.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Qual composto é um polissacarídeo mucolítico que ataca bactérias e causa sua dissolução?', o:['Lisozima','Complemento','Polipeptídeos básicos','Anticorpo'], a:0, why:'A <b>lisozima</b> dissolve bactérias.'},
+   {t:'mc', q:'Quais compostos reagem e inativam certos tipos de bactérias grampositivas?', o:['Lisozima','Polipeptídeos básicos','Linfócitos NK','Epítopos'], a:1, why:'<b>Polipeptídeos básicos</b> inativam certas bactérias grampositivas.'},
+   {t:'mc', q:'Aproximadamente quantas proteínas formam o sistema do complemento?', o:['5','20','100','1.000'], a:1, why:'O complemento tem cerca de <b>20 proteínas</b> e pode ser ativado de vários modos.'},
+   {t:'match', q:'Ligue cada agente da inata ao que ele faz.', p:[['Lisozima','Dissolve bactérias (polissacarídeo mucolítico)'],['Polipeptídeos básicos','Inativam bactérias grampositivas'],['Complemento','Cerca de 20 proteínas que destroem bactérias'],['Linfócitos NK','Destroem células estranhas e algumas infectadas']], why:'Quatro agentes inatos: lisozima, polipeptídeos básicos, complemento e NK.'},
+   {t:'mc', q:'Quais linfócitos reconhecem e destroem células estranhas e algumas células infectadas, ainda na imunidade inata?', o:['Linfócitos B','Natural killer','Linfócitos T ativados','Macrófagos teciduais'], a:1, why:'Os <b>natural killer</b> (NK) são os seguranças da imunidade inata.'},
+   {t:'tf', q:'O sistema do complemento faz parte dos mecanismos da imunidade inata.', a:true, why:'Verdadeiro. O complemento está na lista dos compostos químicos inatos do sangue.'},
+   {t:'sort', q:'Quem resiste a quê? Classifique cada doença.', b:['Humanos resistem (afeta animais)','Animais resistem (afeta humanos)'],
+    items:[['Cólera suína',0],['Peste bovina',0],['Cinomose canina',0],['Poliomielite',1],['Caxumba',1],['Sarampo',1],['Sífilis',1]],
+    why:'Humanos resistem a cólera suína, peste bovina e cinomose. Animais inferiores resistem a pólio, caxumba, cólera, sarampo e sífilis.'},
+   {t:'mc', q:'Qual doença viral, que mata grande percentual dos cães infectados, é citada como exemplo de resistência humana natural?', o:['Cinomose','Sarampo','Caxumba','Sífilis'], a:0, why:'A <b>cinomose</b> canina.'}
+  ]},
+{ id:'L3', nome:'Imunidade adquirida', sub:'Humoral, celular e antígenos',
+  cards:[
+   {s:11, t:'Imunidade adquirida (adaptativa)', x:'Além da imunidade inata generalizada, o corpo desenvolve imunidade <b>específica</b> extremamente potente contra agentes invasores individuais: <b>bactérias, vírus e toxinas</b> letais e até tecidos estranhos de outros animais. Ela é causada por um sistema imune especial formador de <b>anticorpos</b> e/ou <b>linfócitos ativados</b> que atacam e destroem o invasor específico.', d:'Imunidade adquirida é estudar para a prova: demora, mas depois você sabe tudo sobre aquele assunto específico.', p:'Como se chama a imunidade específica desenvolvida contra agentes invasores individuais?|Imunidade adquirida.'},
+   {s:12, t:'Potência e imunização', x:'A imunidade adquirida dá, em geral, proteção extrema. Toxinas como a <b>botulínica</b> e a <b>tetânica</b> podem ser inativadas em doses superiores a <b>100.000 vezes</b> a quantidade letal sem imunidade. Por isso o tratamento chamado <b>imunização</b> é tão importante para proteger seres humanos contra doenças e toxinas.', d:'Vacina é seguro de vida.', p:'Como se chama o processo utilizado para desenvolver proteção imunológica contra doenças?|Imunização.'},
+   {s:13, t:'Imunidade humoral', x:'Existem dois tipos básicos e aliados de imunidade adquirida. Em um deles o corpo desenvolve <b>anticorpos circulantes</b>: moléculas de <b>globulina</b> no plasma capazes de atacar o invasor. Esse tipo se chama <b>imunidade humoral</b> ou <b>imunidade das células B</b>, porque os <b>linfócitos B</b> produzem os anticorpos.', d:'Time B manda anticorpos pelo plasma: sou o delivery. Time T vai pessoalmente e resolve na mão.', p:'Qual imunidade depende dos anticorpos circulantes?|Imunidade humoral.'},
+   {s:14, t:'Imunidade mediada por células', x:'O segundo tipo depende da formação de grande número de <b>linfócitos T ativados</b>, especialmente nos <b>linfonodos</b>, para destruir o agente estranho. Chama-se <b>imunidade mediada por células</b> ou <b>imunidade das células T</b>. Anticorpos e linfócitos ativados são formados nos <b>tecidos linfoides</b> do corpo.', d:'Qual imunidade depende dos linfócitos T ativados? A celular!', p:'Quais são os dois tipos básicos de imunidade adquirida?|Humoral e celular.'},
+   {s:15, t:'Antígenos desencadeiam tudo', x:'A imunidade adquirida não existe antes da invasão, então o organismo precisa reconhecê-la. Cada toxina ou tipo de microrganismo tem compostos químicos específicos, diferentes de todos os outros. Em geral são <b>proteínas</b> ou <b>grandes polissacarídeos</b>, e são eles que desencadeiam a imunidade adquirida: os <b>antígenos</b>, geradores de anticorpos.', d:'Eu sou uma grande proteína ou polissacarídeo, pesando 8.000 ou mais. Sou o gerador de anticorpos que ninguém pediu.', p:'Como são chamadas as substâncias que desencadeiam a imunidade adquirida?|Antígenos.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Como se chama a imunidade específica desenvolvida contra agentes invasores individuais?', o:['Imunidade adquirida','Imunidade inata','Fagocitose','Complemento'], a:0, why:'<b>Imunidade adquirida</b> (ou adaptativa): específica e extremamente potente.'},
+   {t:'tf', q:'A imunidade adquirida já está pronta antes da primeira invasão por um microrganismo ou toxina.', a:false, why:'Falso. Ela só se desenvolve <b>depois</b> que o organismo é atacado, por isso demora.'},
+   {t:'tf', q:'Toxinas como a botulínica e a tetânica podem ser inativadas em doses até 100.000 vezes a quantidade letal graças à imunidade adquirida.', a:true, why:'Verdadeiro. Por isso a <b>imunização</b> é tão importante.'},
+   {t:'mc', q:'Como se chama o processo de tratamento usado para desenvolver proteção contra doenças e toxinas?', o:['Fagocitose','Imunização','Epítopo','Clonagem'], a:1, why:'<b>Imunização</b>.'},
+   {t:'mc', q:'Quais são os dois tipos básicos de imunidade adquirida?', o:['Humoral e mediada por células','Inata e adquirida','Pele e estômago','Fagocitose e complemento'], a:0, why:'<b>Humoral</b> (células B, anticorpos) e <b>mediada por células</b> (células T).'},
+   {t:'sort', q:'Humoral ou celular? Classifique cada característica.', b:['Imunidade humoral','Imunidade celular'],
+    items:[['Anticorpos circulantes no plasma',0],['Também chamada imunidade das células B',0],['Depende de linfócitos T ativados',1],['Também chamada imunidade das células T',1],['Moléculas de globulina atacam o invasor',0],['Linfócitos ativados formados nos linfonodos destroem o agente',1]],
+    why:'<b>Humoral</b> = anticorpos das células B. <b>Celular</b> = linfócitos T ativados.'},
+   {t:'match', q:'Ligue cada termo ao seu significado.', p:[['Imunidade humoral','Anticorpos circulantes (globulinas do plasma)'],['Imunidade celular','Depende de linfócitos T ativados'],['Antígeno','Proteína ou polissacarídeo grande que gera anticorpos'],['Imunização','Tratamento que protege contra doenças e toxinas']], why:'Humoral = anticorpos. Celular = T ativados. Antígeno = gatilho. Imunização = proteção induzida.'},
+   {t:'mc', q:'Como são chamadas as substâncias, em geral proteínas ou grandes polissacarídeos, que desencadeiam a imunidade adquirida?', o:['Epítopos','Antígenos','Lisozimas','Autoanticorpos'], a:1, why:'<b>Antígenos</b>: geradores de anticorpos.'}
+  ]},
+{ id:'L4', nome:'Antígenos e tecido linfoide', sub:'Peso molecular, epítopos e postos de defesa',
+  cards:[
+   {s:16, t:'Peso molecular e antigenicidade', x:'Para uma substância ser antigênica, ela deve em geral ter <b>alto peso molecular</b>: de <b>8.000 ou mais</b>.', d:'Antígeno = proteína ou polissacarídeo grande, de peso molecular 8.000 ou mais, que gera anticorpos.', p:'Qual peso molecular mínimo geralmente está associado à antigenicidade?|8.000.'},
+   {s:17, t:'Epítopos', x:'A antigenicidade depende, em geral, de <b>grupos moleculares que se repetem</b> de forma regular na superfície das grandes moléculas: os <b>epítopos</b>. Isso explica por que proteínas e grandes polissacarídeos são quase sempre antigênicos: têm essa característica estereoquímica.', d:'Epítopos são minhas impressões digitais, repetidas em padrão. É por elas que o sistema me reconhece.', p:'Como se chamam os grupos moleculares específicos responsáveis pela antigenicidade?|Epítopos.'},
+   {s:18, t:'Sem linfócitos, sem adquirida', x:'A imunidade adquirida é produto dos <b>linfócitos</b>. Em pessoas com ausência genética de linfócitos, ou cujos linfócitos foram destruídos por radiação ou produtos químicos, nenhuma imunidade adquirida pode se desenvolver. Alguns dias após o nascimento a pessoa morre de infecção bacteriana fulminante, a menos que receba medidas heroicas. Os linfócitos são <b>essenciais para a sobrevivência</b> humana.', d:'Sem linfócitos, sem imunidade adquirida.', p:'Quais células são essenciais para o desenvolvimento da imunidade adquirida?|Linfócitos.'},
+   {s:19, t:'Onde ficam os linfócitos', x:'Os linfócitos ficam, em maior número, nos <b>linfonodos</b>. Também se encontram em tecidos linfoides especiais: <b>baço</b>, áreas submucosas do <b>trato gastrointestinal</b>, <b>timo</b> e <b>medula óssea</b>.', d:'Qual órgão abdominal contém tecido linfoide e participa da defesa? O baço!', p:'Onde se encontra a maior quantidade de linfócitos mencionada no capítulo?|Linfonodos.'},
+   {s:20, t:'Transporte e interceptação', x:'O tecido linfoide é distribuído por todo o corpo para interceptar invasores antes que se espalhem. O agente entra primeiro nos fluidos teciduais e é levado pelos <b>vasos linfáticos</b> aos linfonodos. A parede do <b>trato gastrointestinal</b> intercepta o que invade o intestino; <b>tonsilas e adenoides</b> (garganta e faringe) interceptam o que entra pelo trato respiratório superior; os linfonodos, os tecidos periféricos; e <b>baço, timo e medula óssea</b>, os agentes que alcançaram o sangue.', d:'Nós somos postos de controle: tonsilas na garganta, tecido no intestino, linfonodos nos tecidos. Ninguém passa sem ser verificado.', p:'Através de quais vasos os agentes antigênicos dos tecidos são transportados para os linfonodos?|Vasos linfáticos.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Qual peso molecular mínimo está geralmente associado à antigenicidade?', o:['800','8.000','80','1 milhão'], a:1, why:'Alto peso molecular: <b>8.000 ou mais</b>.'},
+   {t:'mc', q:'Como se chamam os grupos moleculares que se repetem na superfície e são responsáveis pela antigenicidade?', o:['Epítopos','Autoantígenos','Clones','Globulinas'], a:0, why:'<b>Epítopos</b>: as impressões digitais repetidas na superfície.'},
+   {t:'tf', q:'Proteínas e grandes polissacarídeos são quase sempre antigênicos porque apresentam epítopos que se repetem de forma regular.', a:true, why:'Verdadeiro. Essa é a característica estereoquímica deles.'},
+   {t:'mc', q:'Quais células são essenciais para o desenvolvimento da imunidade adquirida?', o:['Hemácias','Linfócitos','Plaquetas','Células da pele'], a:1, why:'Sem <b>linfócitos</b> não há imunidade adquirida.'},
+   {t:'tf', q:'Em pessoas sem linfócitos, a imunidade adquirida se desenvolve normalmente, só que mais devagar.', a:false, why:'Falso. Nenhuma imunidade adquirida pode se desenvolver e a pessoa morre de infecção bacteriana fulminante, a menos que receba medidas heroicas.'},
+   {t:'match', q:'Ligue cada tecido linfoide ao seu papel.', p:[['Linfonodos','Onde está o maior número de linfócitos'],['Tonsilas e adenoides','Interceptam antígenos do trato respiratório superior'],['Parede do trato GI','Exposta aos antígenos que invadem o intestino'],['Baço, timo e medula óssea','Interceptam agentes que alcançaram o sangue']], why:'O tecido linfoide está posicionado onde os invasores costumam entrar.'},
+   {t:'order', q:'Coloque na ordem o caminho de um invasor que entra pelos tecidos.', s:['O agente invasor entra nos fluidos teciduais','Vasos linfáticos transportam o agente','O agente chega aos linfonodos','O tecido linfoide intercepta o agente antes que ele se espalhe'], why:'Fluidos teciduais → vasos linfáticos → linfonodos → interceptação.'},
+   {t:'mc', q:'Por quais vasos os agentes antigênicos dos tecidos são transportados até os linfonodos?', o:['Artérias','Veias','Vasos linfáticos','Brônquios'], a:2, why:'Pelos <b>vasos linfáticos</b>.'}
+  ]},
+{ id:'L5', nome:'Origem dos linfócitos T e B', sub:'Células-tronco, timo, fígado e medula óssea',
+  cards:[
+   {s:21, t:'Duas populações de linfócitos', x:'Ao microscópio o tecido linfoide parece semelhante, mas as células se dividem em duas grandes populações. Os <b>linfócitos T</b> formam os linfócitos ativados da imunidade <b>mediada por células</b>. Os <b>linfócitos B</b> formam os <b>anticorpos</b> da imunidade <b>humoral</b>.', d:'T de timo, celular. B de bursa, humoral. Irmãos que trabalham juntos.', p:'Quais linfócitos são especializados na formação de anticorpos?|Linfócitos B.'},
+   {s:22, t:'Origem embrionária', x:'Os dois tipos derivam, no embrião, de <b>células-tronco hematopoiéticas pluripotentes</b>, que formam <b>células progenitoras</b> ao se diferenciar. Quase todos os linfócitos terminam no tecido linfoide, mas antes se diferenciam ainda mais ou são “pré-processados”.', d:'Qual característica das células-tronco permite que virem várias linhagens? Pluripotência!', p:'De quais células se originam inicialmente os linfócitos T e B?|Células-tronco hematopoiéticas.'},
+   {s:23, t:'T: pré-processados no timo', x:'As progenitoras que formarão linfócitos T ativados migram primeiro para o <b>timo</b>, onde são pré-processadas. Por isso se chamam linfócitos “T”, para designar o papel do timo. São responsáveis pela <b>imunidade mediada por células</b>.', d:'O T é de timo. Fiz minha pós-graduação lá e agora tenho especialização.', p:'Qual órgão participa do pré-processamento dos linfócitos T?|Timo.'},
+   {s:24, t:'B: fígado, medula e bursa', x:'Os <b>linfócitos B</b>, destinados a formar anticorpos, são pré-processados no <b>fígado</b>, durante a parte média da gestação, e na <b>medula óssea</b>, no final da vida fetal e logo após o nascimento. A população foi identificada em aves, que têm um órgão de pré-processamento especial: a <b>bursa de Fabricius</b>. Daí o “B”. São responsáveis pela imunidade humoral.', d:'O B é de bursa, nas aves! No humano fui treinado no fígado e na medula.', p:'Qual órgão realiza o pré-processamento dos linfócitos B durante a metade da gestação?|Fígado.'},
+   {s:25, t:'A diferenciação é obrigatória', x:'Embora os linfócitos se originem de células-tronco comprometidas do embrião, essas células-tronco são <b>incapazes de formar diretamente</b> linfócitos T ativados ou anticorpos. Antes, devem se diferenciar ainda mais nas <b>áreas de processamento apropriadas</b>: o timo para os T e o fígado e a medula óssea para os B.', d:'Sozinha eu não faço T nem anticorpo. Preciso do estágio obrigatório nas áreas de processamento.', p:'Células-tronco não fazem T nem anticorpo direto: precisam se diferenciar nas áreas de processamento.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Quais linfócitos são especializados na formação de anticorpos?', o:['Linfócitos T','Linfócitos B','Natural killer','Macrófagos'], a:1, why:'Os <b>linfócitos B</b> formam anticorpos.'},
+   {t:'mc', q:'De quais células se originam inicialmente os linfócitos T e B?', o:['Hemácias','Células-tronco hematopoiéticas pluripotentes','Células do estrato córneo','Plaquetas'], a:1, why:'De <b>células-tronco hematopoiéticas</b> pluripotentes do embrião.'},
+   {t:'sort', q:'T ou B? Classifique cada característica.', b:['Linfócito T','Linfócito B'],
+    items:[['Pré-processado no timo',0],['Forma anticorpos',1],['Responsável pela imunidade mediada por células',0],['Pré-processado no fígado e na medula óssea',1],['Letra vem da bursa de Fabricius',1],['Responsável pela imunidade humoral',1],['Forma linfócitos ativados',0]],
+    why:'<b>T</b>: timo, imunidade celular. <b>B</b>: bursa/fígado/medula, anticorpos, imunidade humoral.'},
+   {t:'mc', q:'Qual órgão participa do pré-processamento dos linfócitos T?', o:['Timo','Fígado','Estômago','Pele'], a:0, why:'O <b>timo</b>. O “T” vem dele.'},
+   {t:'mc', q:'Qual órgão faz o pré-processamento dos linfócitos B durante a metade da gestação?', o:['Timo','Baço','Fígado','Estômago'], a:2, why:'O <b>fígado</b>. Depois, ao fim da vida fetal e após o nascimento, a medula óssea.'},
+   {t:'match', q:'Ligue cada estrutura ao seu papel.', p:[['Timo','Pré-processa os linfócitos T'],['Fígado e medula óssea','Pré-processam os linfócitos B'],['Bursa de Fabricius','Órgão das aves onde os B foram identificados'],['Células-tronco','Origem comum dos T e dos B']], why:'Timo → T. Fígado e medula → B. Bursa → aves.'},
+   {t:'tf', q:'As células-tronco formam diretamente linfócitos T ativados e anticorpos, sem etapa intermediária.', a:false, why:'Falso. Antes elas precisam se diferenciar nas áreas de processamento apropriadas.'},
+   {t:'order', q:'Coloque na ordem a história do linfócito B no ser humano.', s:['Células-tronco hematopoiéticas no embrião','Pré-processamento no fígado (metade da gestação)','Pré-processamento na medula óssea (fim da vida fetal e após o nascimento)','Migração para o tecido linfoide'], why:'Embrião → fígado → medula óssea → tecido linfoide.'}
+  ]},
+{ id:'L6', nome:'Timo, seleção e linfócitos B', sub:'Diversidade, autoantígenos e anticorpos',
+  cards:[
+   {s:26, t:'O timo processa os T', x:'Os linfócitos T, após sua origem na <b>medula óssea</b>, migram primeiro para o <b>timo</b>. Ali se dividem rapidamente e desenvolvem <b>diversidade extrema</b>: um linfócito reage contra um antígeno, o seguinte contra outro, até haver milhares de tipos. Os T pré-processados deixam o timo e se disseminam pelo sangue, alojando-se nos tecidos linfoides de todo o corpo.', d:'No timo, cada colega vira especialista em um antígeno diferente. Milhares de pós-graduações no mesmo prédio.', p:'Para qual órgão migram os precursores dos linfócitos T após sua origem medular?|Timo.'},
+   {s:27, t:'Seleção tímica e autoantígenos', x:'O timo garante que nenhum linfócito T liberado reaja contra proteínas do próprio corpo, senão seria letal em dias. Ele mistura os T com quase todos os <b>autoantígenos</b> dos tecidos; se um T reage, é <b>destruído e fagocitado</b>. Isso acontece com <b>até 90%</b> das células. As liberadas só reagem a antígenos externos: bactérias, toxinas ou tecido transplantado.', d:'Reagiu ao próprio corpo? Reprovado e engolido pelo macrófago. Até 90% repetem e somem.', p:'Como são chamados os antígenos dos próprios tecidos corporais?|Autoantígenos.'},
+   {s:28, t:'Período do timo e transplantes', x:'A maior parte do pré-processamento dos T ocorre <b>pouco antes do nascimento e por alguns meses depois</b> (período perinatal). Depois disso, remover o timo diminui, mas não elimina, o sistema T. Remover o timo <b>meses antes do nascimento</b> pode impedir toda a imunidade celular. Como essa imunidade é a principal responsável pela rejeição de órgãos transplantados, o transplante fica com muito menor chance de rejeição se o timo for removido antes do nascimento.', d:'O filtro principal acontece antes do nascimento; depois, só manutenção.', p:'Quando ocorre a maior parte do pré-processamento dos linfócitos T?|Período perinatal.'},
+   {s:29, t:'B: fígado e medula óssea', x:'Muito menos se sabe sobre o pré-processamento dos linfócitos B do que sobre o dos T. No ser humano, os B são pré-processados no <b>fígado</b>, na metade da vida fetal, e na <b>medula óssea</b>, no final da vida fetal e após o nascimento.', d:'No T, a própria célula reage. No B, os anticorpos reagem por mim.', p:'Linfócitos B são pré-processados no fígado fetal e na medula óssea. No T a célula reage; no B, o anticorpo.'},
+   {s:30, t:'B secretam anticorpos', x:'Os B diferem dos T por dois motivos. Primeiro: em vez de a própria célula reagir contra o antígeno, os B <b>secretam anticorpos</b>, que são os agentes reativos, grandes moléculas proteicas capazes de se combinar com a substância antigênica e destruí-la. Segundo: os B têm <b>diversidade ainda maior</b>, formando muitos milhões de tipos de anticorpos.', d:'Tenho mais variedade que o T: milhões de anticorpos diferentes. Sou o catálogo da loja de defensores.', p:'Qual produto proteico é secretado ativamente pelos linfócitos B diferenciados?|Anticorpos.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Para qual órgão migram os precursores dos linfócitos T depois da origem na medula óssea?', o:['Fígado','Timo','Estômago','Baço'], a:1, why:'Para o <b>timo</b>, onde se dividem e ganham diversidade.'},
+   {t:'mc', q:'Como são chamados os antígenos dos próprios tecidos corporais?', o:['Autoantígenos','Epítopos','Toxinas','Clones'], a:0, why:'<b>Autoantígenos</b>.'},
+   {t:'tf', q:'O timo libera os linfócitos T que reagem contra os autoantígenos do próprio corpo.', a:false, why:'Falso. Os T que reagem aos autoantígenos são destruídos e fagocitados. Só saem os que não atacam o próprio corpo.'},
+   {t:'mc', q:'Em até qual proporção das células T ocorre a destruição na seleção tímica?', o:['Até 1%','Até 10%','Até 50%','Até 90%'], a:3, why:'Isso acontece com <b>até 90%</b> das células.'},
+   {t:'mc', q:'Quando ocorre a maior parte do pré-processamento dos linfócitos T?', o:['Só na vida adulta','Pouco antes do nascimento e por alguns meses depois','Apenas na velhice','Somente na vida fetal inicial'], a:1, why:'No período <b>perinatal</b>: pouco antes do nascimento e alguns meses depois.'},
+   {t:'mc', q:'O que pode acontecer se o timo for removido meses antes do nascimento?', o:['Nada muda','Pode impedir o desenvolvimento de toda a imunidade celular','A pessoa fica imune a tudo','Aumenta a produção de anticorpos'], a:1, why:'Isso pode impedir toda a <b>imunidade celular</b>, que é a principal responsável pela rejeição de órgãos transplantados.'},
+   {t:'match', q:'Ligue cada célula ou órgão ao seu papel.', p:[['Linfócito T','A própria célula ativada reage ao antígeno'],['Linfócito B','Secreta anticorpos, os agentes reativos'],['Timo','Pré-processa T e elimina os que reagem ao próprio corpo'],['Fígado e medula óssea','Pré-processam os linfócitos B']], why:'No T a célula reage; no B o anticorpo reage.'},
+   {t:'mc', q:'Qual produto proteico é secretado ativamente pelos linfócitos B diferenciados?', o:['Anticorpos','Autoantígenos','Epítopos','Lisozima'], a:0, why:'<b>Anticorpos</b>, em muitos milhões de tipos.'}
+  ]},
+{ id:'L7', nome:'Clones e especificidade', sub:'Ativação, proliferação e anticorpos',
+  cards:[
+   {s:31, t:'Alojamento dos linfócitos B', x:'Depois do processamento, os linfócitos B, como os T, migram para o <b>tecido linfoide</b> de todo o corpo. Ali se alojam próximos, mas com certo distanciamento, das áreas de linfócitos T.', d:'B × T: o B secreta anticorpos e tem diversidade ainda maior, milhões de tipos.', p:'Para qual tipo de tecido migram os linfócitos B após o pré-processamento?|Tecido linfoide.'},
+   {s:32, t:'Especificidade das respostas', x:'Quando antígenos específicos entram em contato com linfócitos T e B no tecido linfoide, certos T são ativados para formar <b>células T ativadas</b> e certos B são ativados para formar <b>anticorpos</b>. As duas respostas são muito específicas contra os antígenos que as desencadearam. O mecanismo envolve os <b>clones de linfócitos</b>.', d:'Antígeno certo na porta certa: o T se ativa e o B vira fábrica. O resto da turma continua dormindo.', p:'Cada antígeno ativa só os linfócitos T e B específicos para ele.'},
+   {s:33, t:'Milhões pré-formados', x:'Milhões de tipos diferentes de linfócitos B e T pré-formados ficam armazenados no tecido linfoide. Cada um é capaz de formar <b>somente um tipo</b> de anticorpo ou de célula T, com especificidade única, e <b>só o antígeno específico</b> com que reage pode ativá-lo.', d:'Cada linfócito faz um tipo só. O antígeno chamou o B2 e ele vira um clone de si mesmo. B1 e B3 ficaram no visto.', p:'Quantos tipos diferentes de linfócitos específicos estão armazenados no tecido linfoide?|Milhões.'},
+   {s:34, t:'Ativação e proliferação', x:'Assim que o linfócito específico é ativado pelo seu <b>antígeno</b>, ele se reproduz em números imensos de linfócitos duplicadores. Se for um <b>B</b>, sua progênie secretará o <b>anticorpo</b> específico, que circula pelo corpo. Se for um <b>T</b>, a progênie são <b>células T sensibilizadas</b>, liberadas na linfa, levadas ao sangue, circulando pelos líquidos teciduais e voltando à linfa, às vezes durante <b>meses ou anos</b>.', d:'Clone é tudo igual: Ctrl+C, Ctrl+V de linfócito. As T circulam por meses ou anos, como patrulha.', p:'Qual substância específica desencadeia a ativação de um clone de linfócitos?|Antígeno.'},
+   {s:35, t:'O que é um clone', x:'Há milhões de clones distintos de linfócitos. Quando um clone é ativado pelo seu antígeno, ele se reproduz formando grande número de linfócitos duplicados que secretam anticorpos. Os linfócitos de um clone são <b>idênticos</b> e derivam de um ou de alguns dos linfócitos iniciais de seu tipo específico. O antígeno só ativa os que têm <b>receptores</b> na superfície complementares a ele.', d:'Qual nome recebe uma população de linfócitos derivada de células precursoras específicas? Clone!', p:'Como se chama o conjunto de linfócitos idênticos com a mesma especificidade antigênica?|Clone de linfócitos.'}
+  ],
+  quiz:[
+   {t:'mc', q:'Para qual tipo de tecido migram os linfócitos B depois do pré-processamento?', o:['Tecido muscular','Tecido linfoide','Tecido ósseo','Epitélio da pele'], a:1, why:'Para o <b>tecido linfoide</b>, perto, mas com certo distanciamento, das áreas dos T.'},
+   {t:'tf', q:'Cada antígeno ativa apenas os linfócitos T e B específicos para ele.', a:true, why:'Verdadeiro. O resto da turma continua dormindo.'},
+   {t:'mc', q:'Quantos tipos diferentes de linfócitos específicos estão armazenados no tecido linfoide?', o:['Dezenas','Centenas','Milhares','Milhões'], a:3, why:'<b>Milhões</b> de tipos de B e T pré-formados.'},
+   {t:'mc', q:'Cada linfócito pré-formado é capaz de formar quantos tipos de anticorpo ou de célula T?', o:['Somente um tipo','Dois tipos','Todos os tipos','Nenhum, até ser ativado por qualquer substância'], a:0, why:'<b>Somente um tipo</b>, e só o antígeno específico o ativa.'},
+   {t:'order', q:'Coloque na ordem o que acontece quando um antígeno ativa um linfócito B específico.', s:['O antígeno encontra o linfócito com o receptor complementar','O linfócito específico é ativado','Ele se reproduz em grande número de linfócitos duplicados','A progênie secreta anticorpos que circulam pelo corpo'], why:'Reconhecimento → ativação → proliferação (clone) → anticorpos circulando.'},
+   {t:'sort', q:'Ativado, o que acontece com o B e com o T?', b:['Linfócito B','Linfócito T'],
+    items:[['A progênie secreta anticorpos',0],['Formam-se células T especificamente sensibilizadas',1],['Os anticorpos circulam pelo corpo',0],['Percorrem linfa, sangue e líquidos teciduais por meses ou anos',1],['É a base da imunidade humoral',0]],
+    why:'B → anticorpos circulantes. T → células sensibilizadas patrulhando por meses ou anos.'},
+   {t:'mc', q:'Qual substância específica desencadeia a ativação de um clone de linfócitos?', o:['Lisozima','Antígeno','Complemento','Timo'], a:1, why:'O <b>antígeno</b> específico.'},
+   {t:'mc', q:'Como se chama o conjunto de linfócitos idênticos, com a mesma especificidade antigênica?', o:['Clone de linfócitos','Tecido linfoide','Autoantígeno','Epítopo'], a:0, why:'<b>Clone de linfócitos</b>, derivado de um ou de alguns linfócitos iniciais.'}
+  ]}
+];
+
+/* ---- índices ---- */
+const ALLQ = {};
+LEVELS.forEach((L,li)=>L.quiz.forEach((q,qi)=>{ q.id=L.id+'-'+qi; q.li=li; ALLQ[q.id]=q; }));
+const RANKS = [[0,'Recruta'],[150,'Fagócito'],[400,'Linfócito T'],[750,'Clone de elite'],[1150,'Guardião do Corpo']];
+
+/* =====================================================================
+   ESTADO
+   ===================================================================== */
+const KEY='defensores-do-corpo-v1';
+let save={xp:0,levels:{},missed:[],boss:false,sound:true};
+try{ const r=localStorage.getItem(KEY); if(r) save=Object.assign(save,JSON.parse(r)); }catch(e){}
+function persist(){ try{ localStorage.setItem(KEY,JSON.stringify(save)); }catch(e){} }
+
+const app=document.getElementById('app');
+const hud=document.getElementById('hud');
+let run=null, qs=null, timerId=null;
+
+/* =====================================================================
+   UTILIDADES
+   ===================================================================== */
+function shuffle(a){ a=a.slice(); for(let i=a.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; }
+function rank(){ let r=RANKS[0][1]; RANKS.forEach(x=>{ if(save.xp>=x[0]) r=x[1]; }); return r; }
+function totalStars(){ return LEVELS.reduce((n,L)=>n+((save.levels[L.id]||{}).stars||0),0); }
+function allDone(){ return LEVELS.every(L=>(save.levels[L.id]||{}).stars>0); }
+function stars(n,cls){ let s='<span class="stars '+(cls||'')+'" aria-label="'+n+' de 3 estrelas">'; for(let i=0;i<3;i++) s+='<svg viewBox="0 0 24 24" class="'+(i<n?'star-on':'star-off')+'"><path d="M12 2.5l2.9 6.1 6.6.9-4.8 4.6 1.2 6.6L12 17.5l-5.9 3.2 1.2-6.6L2.5 9.5l6.6-.9z"/></svg>'; return s+'</span>'; }
+function hearts(n){ let s='<span class="hearts" aria-label="'+n+' vidas">'; for(let i=0;i<3;i++) s+='<svg viewBox="0 0 24 24" class="'+(i<n?'h-on':'h-off')+'"><path d="M12 21s-7.5-4.6-9.5-9.2C1 8 3.2 4.5 6.6 4.5c2 0 3.5 1.1 5.4 3.3 1.9-2.2 3.4-3.3 5.4-3.3 3.4 0 5.6 3.5 4.1 7.3C19.5 16.4 12 21 12 21z"/></svg>'; return s+'</span>'; }
+function mascot(mood,size){
+  const mouths={happy:'M38 64 Q50 76 62 64',win:'M36 62 Q50 82 64 62 Z',sad:'M40 70 Q50 60 60 70',think:'M42 67 L58 67'};
+  const brows = mood==='sad' ? '<path d="M33 38 L43 42 M67 38 L57 42" stroke="#0E2142" stroke-width="3" stroke-linecap="round"/>' : '';
+  return '<svg viewBox="0 0 100 100" width="'+(size||84)+'" height="'+(size||84)+'" role="img" aria-label="Linfo, o mascote" style="flex:none">'
+   +'<ellipse cx="50" cy="94" rx="26" ry="4" style="fill:var(--ink);opacity:.12"/>'
+   +'<circle cx="50" cy="56" r="34" style="fill:var(--def)"/>'
+   +'<ellipse cx="36" cy="46" rx="9" ry="5" transform="rotate(-30 36 46)" style="fill:#fff;opacity:.28"/>'
+   +'<path d="M16 50 A34 32 0 0 1 84 50 Z" style="fill:var(--gold)"/>'
+   +'<rect x="12" y="48" width="76" height="8" rx="4" style="fill:var(--gold-deep)"/>'
+   +'<rect x="46" y="22" width="8" height="20" rx="2" style="fill:#fff"/><rect x="40" y="28" width="20" height="8" rx="2" style="fill:#fff"/>'
+   +'<circle cx="38" cy="64" r="6" style="fill:#fff"/><circle cx="62" cy="64" r="6" style="fill:#fff"/>'
+   +'<circle cx="39" cy="65" r="3" fill="#0E2142"/><circle cx="63" cy="65" r="3" fill="#0E2142"/>'
+   +'<path d="'+mouths[mood||'happy']+'" fill="'+(mood==='win'?'#0E2142':'none')+'" stroke="#0E2142" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" transform="translate(0 9)"/>'
+   +brows+'</svg>';
+}
+function germ(size,mood){
+  let sp=''; for(let i=0;i<12;i++){ const a=i*Math.PI/6; sp+='<line x1="'+(50+30*Math.cos(a))+'" y1="'+(50+30*Math.sin(a))+'" x2="'+(50+43*Math.cos(a))+'" y2="'+(50+43*Math.sin(a))+'" stroke-width="7" stroke-linecap="round" style="stroke:var(--bad)"/><circle cx="'+(50+43*Math.cos(a))+'" cy="'+(50+43*Math.sin(a))+'" r="5" style="fill:var(--bad-deep)"/>'; }
+  return '<svg viewBox="0 0 100 100" width="'+size+'" height="'+size+'" role="img" aria-label="Infecção Geral" style="flex:none">'+sp
+   +'<circle cx="50" cy="50" r="31" style="fill:var(--bad)"/>'
+   +'<path d="M33 40 L45 46 M67 40 L55 46" stroke="#fff" stroke-width="4" stroke-linecap="round"/>'
+   +'<circle cx="40" cy="50" r="5" fill="#fff"/><circle cx="60" cy="50" r="5" fill="#fff"/><circle cx="41" cy="51" r="2.5" fill="#0E2142"/><circle cx="59" cy="51" r="2.5" fill="#0E2142"/>'
+   +'<path d="'+(mood==='dead'?'M38 68 Q50 60 62 68':'M38 66 Q50 74 62 66')+'" fill="none" stroke="#fff" stroke-width="3.5" stroke-linecap="round"/></svg>';
+}
+
+/* som */
+let ac=null;
+function tone(f,d,t,when){ if(!save.sound) return; try{ ac=ac||new (window.AudioContext||window.webkitAudioContext)(); const o=ac.createOscillator(), g=ac.createGain(); o.type=t||'sine'; o.frequency.value=f; const s=ac.currentTime+(when||0); g.gain.setValueAtTime(.0001,s); g.gain.exponentialRampToValueAtTime(.12,s+.02); g.gain.exponentialRampToValueAtTime(.0001,s+d); o.connect(g); g.connect(ac.destination); o.start(s); o.stop(s+d+.02); }catch(e){} }
+const sfx={ ok(){tone(660,.12,'triangle');tone(880,.16,'triangle',.1);}, bad(){tone(220,.22,'sawtooth');tone(165,.28,'sawtooth',.12);}, win(){[523,659,784,1046].forEach((f,i)=>tone(f,.18,'triangle',i*.11));}, tick(){tone(520,.05,'square');} };
+
+/* =====================================================================
+   TELAS
+   ===================================================================== */
+function drawHud(){
+  hud.innerHTML='<span class="brand">'+'<svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true"><path d="M12 2l8 3v6c0 5-3.4 9.3-8 11-4.6-1.7-8-6-8-11V5z" style="fill:var(--def)"/><path d="M10.5 7h3v3.5H17v3h-3.5V17h-3v-3.5H7v-3h3.5z" fill="#fff"/></svg>Defensores do Corpo</span>'
+   +'<span class="pill" title="Pontos de experiência"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6z" style="fill:var(--gold)"/></svg><span>'+save.xp+' XP</span></span>'
+   +'<button class="ghost" data-act="sound" aria-pressed="'+save.sound+'">Som '+(save.sound?'ligado':'desligado')+'</button>';
+}
+function go(html){ app.innerHTML=html; window.scrollTo(0,0); }
+
+function home(){
+  clearTimer(); run=null; qs=null; drawHud();
+  const nextIdx = LEVELS.findIndex(L=>!((save.levels[L.id]||{}).stars>0));
+  const stT=totalStars();
+  let nodes='';
+  LEVELS.forEach((L,i)=>{
+    const st=(save.levels[L.id]||{}).stars||0;
+    const unlocked = i===0 || ((save.levels[LEVELS[i-1].id]||{}).stars>0);
+    const cls = st>0?'done':(i===nextIdx?'next':'');
+    nodes+='<button class="node '+cls+'" data-act="openLevel" data-i="'+i+'" '+(unlocked?'':'disabled')+'>'
+      +'<span class="badge">'+L.id+'</span>'
+      +'<span><h3>'+L.nome+'</h3><p class="sub">'+(unlocked?L.sub:'Conclua a fase anterior para liberar')+'</p></span>'
+      +(unlocked?stars(st):'<span class="chip">Bloqueada</span>')
+      +'</button>';
+  });
+  const bossOpen = allDone();
+  nodes+='<button class="node boss '+(bossOpen&&!save.boss?'next':'')+(save.boss?' done':'')+'" data-act="boss" '+(bossOpen?'':'disabled')+'>'
+    +'<span class="badge">'+(save.boss?'★':'!')+'</span>'
+    +'<span><h3>Chefão: Infecção Geral</h3><p class="sub">'+(bossOpen?'Perguntas de todas as fases, com tempo e 3 vidas':'Conclua as 7 fases para enfrentar')+'</p></span>'
+    +(save.boss?'<span class="chip">Vencido</span>':(bossOpen?'':'<span class="chip">Bloqueado</span>'))+'</button>';
+  go('<div class="stack" style="display:flex;flex-direction:column;gap:18px">'
+    +'<section class="card hero"><div class="bob">'+mascot('happy',108)+'</div><div><h1>Aprenda imunidade jogando</h1><p>Capítulo 34: resistência do corpo à infecção. Sete fases, uma para cada bloco de slides, e um chefão no final.</p></div></section>'
+    +'<section class="howto"><div><b>1. Leia as cartas</b>Cada fase tem 5 cartas, uma por slide.</div><div><b>2. Vença os desafios</b>Escolha, ligue, classifique e ordene. Você tem 3 vidas.</div><div><b>3. Errou? Volta</b>A pergunta errada retorna até você acertar.</div></section>'
+    +'<section class="stats"><span class="pill rank">'+rank()+'</span><span class="pill">'+stT+' / '+(LEVELS.length*3)+' estrelas</span><div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="21" aria-valuenow="'+stT+'"><i style="width:'+Math.round(stT/(LEVELS.length*3)*100)+'%"></i></div></section>'
+    +'<section class="map">'+nodes+'</section>'
+    +'<section class="tools">'
+      +(save.missed.length?'<button class="btn alt" data-act="review">Treinar '+save.missed.length+' pergunta'+(save.missed.length>1?'s':'')+' que você errou</button>':'<span class="muted">Nenhuma pergunta errada para revisar.</span>')
+      +'<button class="ghost" data-act="reset" id="resetBtn">Apagar progresso</button>'
+    +'</section></div>');
+}
+
+function openLevel(i){ learn(i,0); }
+
+function learn(li,ci){
+  clearTimer(); drawHud();
+  const L=LEVELS[li], c=L.cards[ci], last=ci===L.cards.length-1;
+  let pips=''; L.cards.forEach((_,k)=>{ pips+='<i class="'+(k<ci?'on':(k===ci?'cur':''))+'"></i>'; });
+  const pr=c.p.split('|');
+  go('<section style="display:flex;flex-direction:column;gap:16px">'
+    +'<div class="lhead"><button class="x" data-act="home" aria-label="Voltar ao mapa"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></svg></button><div class="pips">'+pips+'</div><span class="chip">'+L.id+' · '+(ci+1)+'/'+L.cards.length+'</span></div>'
+    +'<article class="card lcard">'
+      +'<button class="shot" data-act="zoom" data-src="slides/s'+String(c.s).padStart(2,'0')+'.jpg" aria-label="Ampliar o slide original"><img src="slides/s'+String(c.s).padStart(2,'0')+'.jpg" alt="Slide '+c.s+' do material original" onerror="this.parentNode.classList.add(\'noimg\')"><span>Slide '+c.s+' · ampliar</span></button>'
+      +'<div class="ltxt"><p class="eyebrow">'+L.nome+'</p><h2>'+c.t+'</h2><p class="body">'+c.x+'</p>'
+      +'<div class="say">'+mascot('happy',64)+'<div class="bubble">'+c.d+'</div></div>'
+      +'<div class="prova"><span class="tag">Cai na prova</span><span>'+(pr.length>1?pr[0]:pr[0])+'</span>'
+      +(pr.length>1?'<button data-act="reveal">Mostrar resposta</button><span class="ans" hidden>'+pr[1]+'</span>':'')
+      +'</div></div>'
+    +'</article>'
+    +'<div class="lnav"><button class="btn alt" data-act="cardPrev" data-li="'+li+'" data-ci="'+ci+'" '+(ci===0?'disabled':'')+'>Anterior</button>'
+      +(last?'<button class="btn good" data-act="startQuiz" data-li="'+li+'">Começar desafios</button>':'<button class="btn" data-act="cardNext" data-li="'+li+'" data-ci="'+ci+'">Próxima carta</button>')
+    +'</div>'
+    +(last?'':'<button class="ghost" style="align-self:center" data-act="startQuiz" data-li="'+li+'">Já estudei, ir para os desafios</button>')
+    +'</section>');
+}
+
+/* ---------- desafios ---------- */
+function startRun(mode,pool,li,label){
+  run={mode:mode,li:li,label:label,queue:pool.map(q=>({q:q,retry:false})),total:pool.length,done:0,hearts:3,mistakes:0,firstTry:0,streak:0,best:0,xp:0,missedQs:[],missByLevel:{}};
+  renderQ();
+}
+function startQuiz(li){ const L=LEVELS[li]; startRun('level',shuffle(L.quiz),li,L.id+' · Desafio'); }
+function startReview(){ const pool=shuffle(save.missed.map(id=>ALLQ[id]).filter(Boolean)).slice(0,10); if(!pool.length){ home(); return; } startRun('review',pool,-1,'Treino de revisão'); }
+function startBoss(){
+  let pool=[]; LEVELS.forEach(L=>{ pool=pool.concat(shuffle(L.quiz.filter(q=>q.t==='mc'||q.t==='tf')).slice(0,2)); });
+  startRun('boss',shuffle(pool),-1,'Chefão');
+}
+function clearTimer(){ if(timerId){ clearInterval(timerId); timerId=null; } }
+
+function renderQ(){
+  clearTimer(); hud.innerHTML='';
+  const it=run.queue[0], q=it.q; qs={done:false,wrong:false};
+  let body='';
+  if(q.t==='mc'){
+    qs.opts=shuffle(q.o.map((t,i)=>({t:t,ok:i===q.a})));
+    body='<div class="opts">'+qs.opts.map((o,i)=>'<button class="opt" data-act="pick" data-i="'+i+'"><span class="k">'+'ABCD'[i]+'</span><span>'+o.t+'</span></button>').join('')+'</div>';
+  } else if(q.t==='tf'){
+    qs.opts=[{t:'Verdadeiro',ok:q.a===true},{t:'Falso',ok:q.a===false}];
+    body='<div class="opts">'+qs.opts.map((o,i)=>'<button class="opt" data-act="pick" data-i="'+i+'"><span class="k">'+(i?'F':'V')+'</span><span>'+o.t+'</span></button>').join('')+'</div>';
+  } else if(q.t==='match'){
+    qs.L=shuffle(q.p.map((p,i)=>({t:p[0],i:i}))); qs.R=shuffle(q.p.map((p,i)=>({t:p[1],i:i}))); qs.sel=null; qs.matched=0;
+    body='<div class="match"><div class="col">'+qs.L.map((x,k)=>'<button class="mbtn" data-act="mL" data-i="'+k+'">'+x.t+'</button>').join('')+'</div><div class="col">'+qs.R.map((x,k)=>'<button class="mbtn" data-act="mR" data-i="'+k+'">'+x.t+'</button>').join('')+'</div></div><p class="muted">Toque em um item da esquerda e depois no par dele, à direita.</p>';
+  } else if(q.t==='sort'){
+    qs.items=shuffle(q.items); qs.i=0;
+    body='<div class="sortcard" id="sortcard"></div><p class="hint" id="hint"></p><div class="buckets">'+q.b.map((b,i)=>'<button class="bucket" data-act="bucket" data-i="'+i+'">'+b+'</button>').join('')+'</div><p class="muted" id="sortprog" style="text-align:center"></p>';
+  } else if(q.t==='order'){
+    qs.pool=shuffle(q.s.map((t,i)=>({t:t,i:i}))); qs.ans=[];
+    body='<div class="order-zone" id="orderArea"></div>';
+  }
+  const hpLeft = run.total-run.done;
+  const head = run.mode==='boss'
+    ? '<div class="boss-head">'+germ(64,'')+'<div class="hp"><small>Infecção Geral · '+hpLeft+' de '+run.total+'</small><div class="bar"><i style="width:'+Math.round(hpLeft/run.total*100)+'%"></i></div></div></div><div class="timer" aria-hidden="true"><i id="tbar"></i></div>'
+    : '';
+  go('<section style="display:flex;flex-direction:column;gap:16px">'
+    +'<div class="qtop"><button class="x" data-act="exit" aria-label="Sair do desafio"><svg viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="3" stroke-linecap="round" fill="none"/></svg></button>'
+      +(run.mode==='boss'?'<span class="chip" style="background:var(--bad-soft);color:var(--bad)">Chefão</span><span style="flex:1"></span>':'<div class="bar" role="progressbar" aria-valuemin="0" aria-valuemax="'+run.total+'" aria-valuenow="'+run.done+'"><i style="width:'+Math.round(run.done/run.total*100)+'%"></i></div>')
+      +hearts(run.hearts)+'</div>'
+    +head
+    +'<div class="qmeta"><span class="chip">'+run.label+'</span>'+(it.retry?'<span class="chip" style="background:var(--gold-soft);color:var(--gold-deep)">Segunda chance</span>':'')+(run.streak>1?'<span class="combo">Combo x'+run.streak+'</span>':'')+'</div>'
+    +'<h2 class="qtext">'+q.q+'</h2>'
+    +body
+    +'<div id="fb"></div>'
+    +'</section>');
+  if(q.t==='sort') drawSort();
+  if(q.t==='order') drawOrder();
+  if(run.mode==='boss'){
+    const t0=Date.now(), DUR=(q.t==='mc'||q.t==='tf')?22000:30000, bar=document.getElementById('tbar');
+    timerId=setInterval(function(){
+      const f=1-(Date.now()-t0)/DUR; if(bar) bar.style.width=Math.max(0,f*100)+'%';
+      if(f<=0 && !qs.done){ clearTimer(); timeUp(); }
+    },100);
+  }
+}
+function timeUp(){
+  qs.done=true;
+  app.querySelectorAll('.opt').forEach((b,j)=>{ b.disabled=true; if(qs.opts[j].ok) b.classList.add('right'); });
+  finish(false,true,'Tempo esgotado. ');
+}
+
+function drawSort(){
+  const q=run.queue[0].q, card=document.getElementById('sortcard');
+  card.textContent=qs.items[qs.i][0];
+  document.getElementById('sortprog').textContent=(qs.i+1)+' de '+qs.items.length;
+  card.classList.remove('pop'); void card.offsetWidth; card.classList.add('pop');
+}
+function drawOrder(){
+  const q=run.queue[0].q, el=document.getElementById('orderArea');
+  const poolHtml=qs.pool.filter(x=>qs.ans.indexOf(x)<0).map(x=>'<button class="chipstep" data-act="oAdd" data-k="'+qs.pool.indexOf(x)+'"><span class="n">+</span><span>'+x.t+'</span></button>').join('');
+  const ansHtml=qs.ans.map((x,pos)=>'<button class="chipstep '+(qs.checked?(x.i===pos?'right':'wrong'):'')+'" data-act="oRem" data-k="'+pos+'" '+(qs.checked?'disabled':'')+'><span class="n">'+(pos+1)+'</span><span>'+x.t+'</span></button>').join('');
+  el.innerHTML='<span class="order-label">Sua ordem</span><div class="slot">'+(ansHtml||'<span class="muted">Toque nos passos abaixo na ordem certa.</span>')+'</div>'
+    +(poolHtml?'<span class="order-label">Passos</span><div class="slot" style="border-style:solid">'+poolHtml+'</div>':'')
+    +(qs.checked?'':'<div class="row"><button class="btn good" data-act="oCheck" '+(qs.pool.length===qs.ans.length?'':'disabled')+'>Verificar</button><button class="btn alt" data-act="oClear" '+(qs.ans.length?'':'disabled')+'>Limpar</button></div>');
+}
+
+function markMissed(id){ if(save.missed.indexOf(id)<0) save.missed.push(id); }
+function unmiss(id){ const i=save.missed.indexOf(id); if(i>=0) save.missed.splice(i,1); }
+
+/* resolve a pergunta atual */
+function finish(ok,requeue,prefix){
+  clearTimer();
+  const it=run.queue[0], q=it.q;
+  let msg='';
+  if(ok){
+    run.streak++; run.best=Math.max(run.best,run.streak);
+    const gain = it.retry ? 5 : 10+Math.min(run.streak-1,4)*2;
+    run.xp+=gain; run.done++; if(!it.retry){ run.firstTry++; unmiss(q.id); }
+    sfx.ok();
+  } else {
+    run.streak=0; run.mistakes++; run.hearts--; markMissed(q.id);
+    run.missByLevel[q.li]=(run.missByLevel[q.li]||0)+1;
+    if(run.missedQs.indexOf(q)<0) run.missedQs.push(q);
+    if(requeue && !it.retry){ run.queue.push({q:q,retry:true}); msg='Essa pergunta volta no fim para você tentar de novo. '; }
+    else { run.done++; }
+    sfx.bad();
+  }
+  persist();
+  let extra='';
+  if(!ok && q.t==='order'){ extra='<ol>'+q.s.map(s=>'<li>'+s+'</li>').join('')+'</ol>'; }
+  const praise=['Isso aí!','Acertou!','Defesa perfeita!','Na mosca!','Boa, defensor!'];
+  const lastQ = run.queue.length<=1 && (ok || !requeue || it.retry);
+  const dead = run.hearts<=0;
+  const btnLabel = dead ? 'Ver resultado' : (lastQ ? 'Concluir' : 'Continuar');
+  const hearts0 = document.querySelector('.qtop .hearts');
+  if(hearts0) hearts0.outerHTML=hearts(run.hearts);
+  document.getElementById('fb').innerHTML='<div class="fb '+(ok?'ok':'no')+'" role="status">'
+    +'<h3>'+(ok?praise[Math.floor(Math.random()*praise.length)]:(prefix||'')+'Quase!')+'</h3>'
+    +'<p class="why">'+(q.why||'')+' '+(ok?'':'<span class="muted">'+msg+'</span>')+'</p>'+extra
+    +'<button class="btn '+(ok?'good':'bad')+'" data-act="next" id="nextBtn">'+btnLabel+'</button></div>';
+  const nb=document.getElementById('nextBtn'); if(nb) nb.focus({preventScroll:false});
+  const fb=document.getElementById('fb'); if(fb.scrollIntoView) fb.scrollIntoView({block:'nearest',behavior:'smooth'});
+}
+
+function next(){
+  run.queue.shift();
+  if(run.hearts<=0){ return runEnd(false); }
+  if(!run.queue.length){ return runEnd(true); }
+  renderQ();
+}
+
+function runEnd(won){
+  clearTimer(); drawHud();
+  const L = run.li>=0 ? LEVELS[run.li] : null;
+  if(!won){
+    const boss=run.mode==='boss';
+    go('<section class="card result">'+(boss?germ(120,''):mascot('sad',110))
+      +'<h1>'+(boss?'A infecção venceu desta vez':'O corpo foi infectado')+'</h1>'
+      +'<p class="muted" style="max-width:46ch">'+(boss?'Releia as fases onde mais errou e volte com tudo.':'Acabaram as vidas. Releia as cartas e tente de novo: o jogo foi feito para errar e aprender.')+'</p>'
+      +'<div class="row" style="justify-content:center">'
+      +(L?'<button class="btn alt" data-act="openLevel" data-i="'+run.li+'">Reler as cartas</button><button class="btn" data-act="startQuiz" data-li="'+run.li+'">Tentar de novo</button>':'<button class="btn" data-act="'+(boss?'boss':'review')+'">Tentar de novo</button><button class="btn alt" data-act="home">Mapa</button>')
+      +'</div></section>');
+    return;
+  }
+  // vitória
+  let st=3; if(run.mistakes>2) st=1; else if(run.mistakes>0) st=2;
+  const bonus = 10*st;
+  save.xp += run.xp + bonus;
+  if(run.mode==='level'){ const cur=(save.levels[L.id]||{}).stars||0; save.levels[L.id]={stars:Math.max(cur,st)}; }
+  if(run.mode==='boss'){ save.boss=true; }
+  persist(); drawHud(); sfx.win();
+  const total=run.firstTry+run.mistakes; const acc= total? Math.round(run.firstTry/Math.max(1,run.total)*100):100;
+  let missHtml='';
+  if(run.missedQs.length){
+    missHtml='<div class="review"><h3>Para fixar: o que você errou</h3><ul>'+run.missedQs.map(q=>'<li><b>'+q.q+'</b><br>'+q.why+'</li>').join('')+'</ul></div>';
+  }
+  let title, sub, actions;
+  if(run.mode==='level'){
+    title=L.id+' concluída!'; sub=L.nome;
+    const hasNext = run.li<LEVELS.length-1;
+    actions='<button class="btn alt" data-act="home">Mapa</button><button class="btn alt" data-act="startQuiz" data-li="'+run.li+'">Jogar de novo</button>'
+      +(hasNext?'<button class="btn" data-act="openLevel" data-i="'+(run.li+1)+'">Próxima fase</button>':(allDone()?'<button class="btn bad" data-act="boss">Enfrentar o chefão</button>':''));
+  } else if(run.mode==='boss'){
+    title='Infecção vencida!'; sub='Você é um Defensor do Corpo';
+    let worst=-1,wn=0; Object.keys(run.missByLevel).forEach(k=>{ if(run.missByLevel[k]>wn){ wn=run.missByLevel[k]; worst=+k; } });
+    if(worst>=0) sub+='. Ponto a reforçar: '+LEVELS[worst].id+' · '+LEVELS[worst].nome;
+    actions='<button class="btn alt" data-act="boss">Lutar de novo</button><button class="btn" data-act="home">Mapa</button>';
+  } else { title='Revisão concluída'; sub='Perguntas treinadas'; actions='<button class="btn" data-act="home">Mapa</button>'; }
+  go('<section class="card result">'+mascot('win',110)
+    +'<h1>'+title+'</h1><p class="muted">'+sub+'</p>'
+    +(run.mode==='review'?'':stars(st,'big'))
+    +'<div class="tiles"><div class="tile"><b>+'+(run.xp+bonus)+'</b><span>XP ganho</span></div><div class="tile"><b>'+acc+'%</b><span>de primeira</span></div><div class="tile"><b>x'+run.best+'</b><span>maior combo</span></div></div>'
+    +missHtml
+    +'<div class="row" style="justify-content:center">'+actions+'</div></section>');
+}
+
+/* =====================================================================
+   AÇÕES (delegação de cliques)
+   ===================================================================== */
+const A = {
+  home(){ home(); },
+  sound(){ save.sound=!save.sound; persist(); drawHud(); sfx.tick(); },
+  openLevel(el){ openLevel(+el.dataset.i); },
+  cardNext(el){ learn(+el.dataset.li,+el.dataset.ci+1); },
+  cardPrev(el){ learn(+el.dataset.li,+el.dataset.ci-1); },
+  startQuiz(el){ startQuiz(+el.dataset.li); },
+  boss(){ startBoss(); },
+  review(){ startReview(); },
+  reveal(el){ el.hidden=true; el.nextElementSibling.hidden=false; },
+  zoom(el){ const lb=document.getElementById('lightbox'); document.getElementById('lbimg').src=el.dataset.src; lb.hidden=false; },
+  unzoom(){ document.getElementById('lightbox').hidden=true; },
+  reset(el){
+    if(!el.dataset.armed){ el.dataset.armed='1'; el.textContent='Toque de novo para apagar tudo'; el.style.color='var(--bad)'; el.style.borderColor='var(--bad)'; return; }
+    save={xp:0,levels:{},missed:[],boss:false,sound:save.sound}; persist(); home();
+  },
+  exit(el){
+    if(!el.dataset.armed){ el.dataset.armed='1'; el.classList.add('armed'); el.setAttribute('aria-label','Toque de novo para sair'); setTimeout(()=>{ try{ delete el.dataset.armed; el.classList.remove('armed'); }catch(e){} },2500); return; }
+    home();
+  },
+  next(){ next(); },
+  pick(el){
+    if(qs.done) return; qs.done=true;
+    const i=+el.dataset.i, o=qs.opts[i];
+    app.querySelectorAll('.opt').forEach((b,j)=>{ b.disabled=true; if(qs.opts[j].ok) b.classList.add('right'); });
+    if(!o.ok) el.classList.add('wrong');
+    finish(o.ok,true);
+  },
+  mL(el){
+    if(qs.done||el.classList.contains('ok')) return;
+    app.querySelectorAll('[data-act="mL"]').forEach(b=>b.classList.remove('sel'));
+    el.classList.add('sel'); qs.sel=+el.dataset.i; sfx.tick();
+  },
+  mR(el){
+    if(qs.done||qs.sel===null||el.classList.contains('ok')) return;
+    const lEl=app.querySelector('[data-act="mL"][data-i="'+qs.sel+'"]');
+    const ok = qs.L[qs.sel].i===qs.R[+el.dataset.i].i;
+    if(ok){
+      lEl.classList.remove('sel'); lEl.classList.add('ok'); el.classList.add('ok'); qs.matched++; qs.sel=null; sfx.ok();
+      if(qs.matched===qs.L.length){ qs.done=true; finish(!qs.wrong,false); }
+    } else {
+      qs.wrong=true; lEl.classList.remove('sel'); lEl.classList.add('no'); el.classList.add('no'); qs.sel=null; sfx.bad();
+      setTimeout(()=>{ lEl.classList.remove('no'); el.classList.remove('no'); },420);
+    }
+  },
+  bucket(el){
+    if(qs.done) return;
+    const it=qs.items[qs.i];
+    if(it[1]===+el.dataset.i){
+      qs.i++; sfx.ok(); document.getElementById('hint').textContent='';
+      if(qs.i>=qs.items.length){ qs.done=true; finish(!qs.wrong,false); } else { drawSort(); }
+    } else {
+      qs.wrong=true; sfx.bad();
+      const c=document.getElementById('sortcard'); c.classList.remove('shake'); void c.offsetWidth; c.classList.add('shake');
+      document.getElementById('hint').textContent='Esse não. Tente o outro grupo.';
+    }
+  },
+  oAdd(el){ if(qs.done) return; qs.ans.push(qs.pool[+el.dataset.k]); sfx.tick(); drawOrder(); },
+  oRem(el){ if(qs.done||qs.checked) return; qs.ans.splice(+el.dataset.k,1); drawOrder(); },
+  oClear(){ if(qs.done) return; qs.ans=[]; drawOrder(); },
+  oCheck(){
+    if(qs.done) return; qs.done=true; qs.checked=true;
+    const ok=qs.ans.every((x,pos)=>x.i===pos);
+    drawOrder(); finish(ok,false);
+  }
+};
+document.addEventListener('click',function(e){
+  const el=e.target.closest('[data-act]'); if(!el||el.disabled) return;
+  const f=A[el.dataset.act]; if(f) f(el);
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape'){ A.unzoom(); return; }
+  if(!run||!qs) return;
+  if(/^[1-4]$/.test(e.key)){ const b=app.querySelectorAll('.opt')[+e.key-1]; if(b&&!b.disabled) b.click(); }
+});
+
+home();
+})();
+</script>
+
+</body></html>
