@@ -20,10 +20,11 @@
   --sensivel-fundo: #fff1dc;
   --sombra: 0 1px 2px rgba(0,0,0,.06), 0 4px 18px rgba(0,0,0,.06);
   /* tinta: 3 cores com contraste nos dois temas + marca-texto */
-  --tinta-c1: #d92d20;
-  --tinta-c2: #1d4ed8;
-  --tinta-c3: #047857;
-  --tinta-hl: rgba(250, 204, 21, .38);
+  --tinta-c1: #111111;
+  --tinta-c2: #d92d20;
+  --tinta-c3: #1d4ed8;
+  --tinta-c4: #22c55e;
+  --tinta-hl: rgba(192, 132, 252, .38);
   color-scheme: light;
 }
 :root[data-tema="escuro"] {
@@ -44,10 +45,11 @@
   --sensivel: #ffbf73;
   --sensivel-fundo: #3a2a14;
   --sombra: 0 1px 2px rgba(0,0,0,.4), 0 4px 18px rgba(0,0,0,.3);
-  --tinta-c1: #ff6b6b;
-  --tinta-c2: #6aa8ff;
-  --tinta-c3: #3ddc97;
-  --tinta-hl: rgba(253, 224, 71, .32);
+  --tinta-c1: #f2f2f2;
+  --tinta-c2: #ff6b6b;
+  --tinta-c3: #6aa8ff;
+  --tinta-c4: #4ade80;
+  --tinta-hl: rgba(216, 180, 254, .34);
   color-scheme: dark;
 }
 
@@ -284,26 +286,34 @@ body.caneta-on .pk[disabled] { opacity: .35; cursor: default; }
 /* ---------- caneta ---------- */
 .caneta { position: fixed; right: max(14px, env(safe-area-inset-right)); bottom: max(14px, env(safe-area-inset-bottom)); z-index: 45; display: flex; flex-direction: column; align-items: flex-end; gap: 10px; }
 .fab {
-  display: inline-flex; align-items: center; gap: 8px; height: 56px; padding: 0 20px; border-radius: 28px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 6px; height: 48px; padding: 0 16px; border-radius: 24px; cursor: pointer;
   border: 1px solid var(--borda); background: var(--fundo-2); color: var(--texto); font-weight: 600; box-shadow: 0 4px 18px rgba(0,0,0,.22);
 }
 .fab[aria-pressed="true"] { background: var(--acento); color: var(--acento-texto); border-color: var(--acento); }
 .paleta {
-  display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; max-width: min(92vw, 560px);
-  padding: 8px; border-radius: 18px; background: var(--fundo-2); border: 1px solid var(--borda); box-shadow: 0 4px 18px rgba(0,0,0,.22);
+  display: flex; flex-direction: column; gap: 4px; padding: 4px;
+  border-radius: 16px; background: var(--fundo-2); border: 1px solid var(--borda); box-shadow: 0 4px 18px rgba(0,0,0,.22);
+  max-height: calc(100vh - var(--topo) - 100px); overflow-y: auto;
 }
 .paleta[hidden] { display: none; }
-.paleta-grupo { display: flex; gap: 6px; flex-wrap: wrap; }
+.paleta-grupo { display: flex; flex-direction: column; gap: 4px; }
+.paleta-grupo + .paleta-grupo { border-top: 1px solid var(--borda); padding-top: 4px; }
 .ferr {
-  min-width: 44px; height: 44px; border-radius: 12px; border: 2px solid transparent; background: var(--fundo-3);
-  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0 8px;
+  width: 44px; height: 44px; border-radius: 12px; border: 2px solid transparent; background: transparent;
+  display: inline-flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;
 }
-.ferr[aria-checked="true"], .ferr[aria-pressed="true"] { border-color: var(--acento); background: var(--fundo); }
-.ferr-texto { font-size: 13px; font-weight: 600; padding: 0 12px; }
+.ferr[aria-checked="true"], .ferr[aria-pressed="true"] { border-color: var(--acento); background: var(--fundo-3); }
+/* recolhida: só a ferramenta atual e o botão de abrir */
+.paleta.recolhida .ferr[data-ferr][aria-checked="false"], .paleta.recolhida #btn-desfazer,
+.paleta.recolhida #btn-limpar-bloco, .paleta.recolhida #btn-so-caneta { display: none; }
+.paleta.recolhida .paleta-grupo + .paleta-grupo { border-top: 0; padding-top: 0; }
+.paleta.recolhida #btn-recolher svg { transform: rotate(180deg); }
 .amostra { width: 22px; height: 22px; border-radius: 50%; display: block; }
 .amostra.c1 { background: var(--tinta-c1); }
 .amostra.c2 { background: var(--tinta-c2); }
 .amostra.c3 { background: var(--tinta-c3); }
+.amostra.c4 { background: var(--tinta-c4); }
+.amostra.c1 { outline: 1px solid var(--borda); }
 .amostra.hl { width: 26px; height: 14px; border-radius: 4px; background: var(--tinta-hl); outline: 1px solid color-mix(in srgb, var(--texto) 30%, transparent); }
 
 .toast {

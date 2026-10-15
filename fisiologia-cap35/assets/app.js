@@ -574,7 +574,7 @@
       ligada: false, ferr: 'c1', soCaneta: false, stylus: false,
       areas: {}, lista: [], undo: [], cores: {}, pronto: false
     };
-    var LARG = { c1: 2.4, c2: 2.4, c3: 2.4, hl: 18 };
+    var LARG = { c1: 2.4, c2: 2.4, c3: 2.4, c4: 2.4, hl: 18 };
     var ro = ('ResizeObserver' in window) ? new ResizeObserver(function (ents) {
       ents.forEach(function (en) { var a = en.target._area; if (a) ajustar(a); });
     }) : null;
@@ -655,7 +655,7 @@
     }
     function lerCores() {
       var cs = getComputedStyle(document.documentElement);
-      ['c1', 'c2', 'c3', 'hl'].forEach(function (c) { T.cores[c] = cs.getPropertyValue('--tinta-' + c).trim() || '#d00'; });
+      ['c1', 'c2', 'c3', 'c4', 'hl'].forEach(function (c) { T.cores[c] = cs.getPropertyValue('--tinta-' + c).trim() || '#d00'; });
     }
     T.trocouTema = function () { lerCores(); T.lista.forEach(function (a) { if (a.ativa) redesenhar(a); }); };
 
@@ -821,17 +821,30 @@
       document.body.classList.toggle('ferr-borracha', T.ferr === 'borracha');
       var fab = $('fab-caneta');
       fab.setAttribute('aria-pressed', T.ligada ? 'true' : 'false');
-      $('fab-rotulo').textContent = T.ligada ? 'Caneta ligada' : 'Caneta';
+      $('fab-rotulo').textContent = T.ligada ? 'Desligar' : 'Caneta';
       $('paleta').hidden = !T.ligada;
       Array.prototype.forEach.call(document.querySelectorAll('.ferr[data-ferr]'), function (b) {
         b.setAttribute('aria-checked', b.getAttribute('data-ferr') === T.ferr ? 'true' : 'false');
       });
       var so = $('btn-so-caneta');
       so.setAttribute('aria-pressed', T.soCaneta ? 'true' : 'false');
-      so.textContent = T.soCaneta ? 'Só a caneta desenha' : 'Dedo desenha';
-      so.title = T.soCaneta ? 'Toque para o dedo também desenhar' : 'Toque para só a stylus desenhar (o dedo rola a página)';
-      $('aviso-dedo').hidden = !(T.ligada && !T.soCaneta && toque);
+      so.title = T.soCaneta ? 'Só a caneta desenha; o dedo rola (toque para o dedo também desenhar)' : 'O dedo desenha (toque para só a caneta desenhar)';
+      so.setAttribute('aria-label', so.title);
+      var pal = $('paleta'); pal.classList.toggle('recolhida', !!prefs.paletaRecolhida);
+      var rec = $('btn-recolher');
+      rec.setAttribute('aria-label', prefs.paletaRecolhida ? 'Mostrar ferramentas' : 'Recolher ferramentas');
+      rec.title = rec.getAttribute('aria-label');
+      var mostrarAviso = T.ligada && !T.soCaneta && toque;
+      if (!mostrarAviso) $('aviso-dedo').hidden = true;
+      else if (!T._avisoMostrado) { T._avisoMostrado = true; $('aviso-dedo').hidden = false; clearTimeout(T._avisoT); T._avisoT = setTimeout(function () { $('aviso-dedo').hidden = true; }, 3000); }
+      if (!T.ligada) T._avisoMostrado = false;
     }
+    var recolherT = null;
+    function agendarRecolher() {
+      clearTimeout(recolherT);
+      recolherT = setTimeout(function () { if (T.ligada && !prefs.paletaRecolhida) { prefs.paletaRecolhida = true; salvarPrefs(); atualizarUI(); } }, 3000);
+    }
+    T.agendarRecolher = agendarRecolher;
     function detectouStylus() {
       if (T.stylus) return;
       T.stylus = true;
@@ -841,7 +854,7 @@
       }
     }
     T.ligar = function (v) {
-      T.ligada = v; atualizarUI();
+      T.ligada = v; if (v) { prefs.paletaRecolhida = false; agendarRecolher(); } atualizarUI();
       T.lista.forEach(ajustar);
       if (v && !T.soCaneta && toque && !prefs.avisoVisto) { prefs.avisoVisto = 1; salvarPrefs(); }
     };
@@ -852,9 +865,14 @@
       $('fab-caneta').addEventListener('click', function () { T.ligar(!T.ligada); });
       $('aviso-desligar').addEventListener('click', function () { T.ligar(false); });
       Array.prototype.forEach.call(document.querySelectorAll('.ferr[data-ferr]'), function (b) {
-        b.addEventListener('click', function () { T.ferr = b.getAttribute('data-ferr'); prefs.ferr = T.ferr; salvarPrefs(); atualizarUI(); });
+        b.addEventListener('click', function () {
+          T.ferr = b.getAttribute('data-ferr'); prefs.ferr = T.ferr;
+          if (prefs.paletaRecolhida) { prefs.paletaRecolhida = false; }   // tocar na bolinha recolhida reabre
+          salvarPrefs(); atualizarUI(); agendarRecolher();
+        });
       });
       $('btn-desfazer').addEventListener('click', T.desfazer);
+      $('btn-recolher').addEventListener('click', function () { prefs.paletaRecolhida = !prefs.paletaRecolhida; salvarPrefs(); atualizarUI(); });
       $('btn-limpar-bloco').addEventListener('click', function () { T.limparBloco(BLOCOS[blocoAtual].numero); });
       $('btn-so-caneta').addEventListener('click', function () {
         T.soCaneta = !T.soCaneta; prefs.soCaneta = T.soCaneta; prefs.soCanetaEscolhido = 1; salvarPrefs(); atualizarUI();
