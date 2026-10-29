@@ -1,0 +1,170 @@
+# Atención a la Familia — aula completa
+
+Roteiro da videoaula (≈15 min). Serve também como texto de estudo: cada bloco indica o slide da professora ou se é conteúdo extra. Nos exercícios, pare e responda antes de ler a resposta.
+
+
+## Parte 1
+
+Bem-vindo à aula completa de Atención a la Familia. Vamos passar por todos os slides da professora, um por um, e acrescentar o que costuma cair na prova. Em vários momentos eu vou fazer uma pergunta e aparecer uma contagem na tela. Quando isso acontecer, responda em voz alta antes de ver a resposta. É assim que a memória fixa.
+
+***extra***
+
+Antes de tudo, por que estudar a família? Porque, em medicina familiar, o paciente não adoece sozinho. A diabetes de um pai, o divórcio dos pais, um filho que sai de casa: tudo isso muda a saúde de quem está na nossa frente. Os quatro instrumentos desta aula servem para enxergar esse contexto: o familiograma, a línea de vida, o Apgar familiar e a escala de Holmes y Rahe.
+
+***slide 2***
+
+Slide dois. O familiograma, também chamado genograma, é um instrumento da medicina familiar. Ele dá uma visão rápida do entorno do paciente e ajuda a criar vínculo com ele. Lê-se de duas formas: na horizontal, que mostra o contexto familiar atual, e na vertical, que mostra a família através das gerações. Regra de ouro: no mínimo três gerações, e os acontecimentos críticos da história familiar.
+
+***slide 3***
+
+Slide três, as funções do familiograma. Primeiro, conhecer a estrutura da família. Segundo, as relações entre os membros. Terceiro, uma visão global do ambiente psicossocial. Quarto, reconhecer patologias da estrutura familiar. Quinto, saber em que etapa do ciclo vital estão a família e o paciente, e enxergar pautas que se repetem entre gerações, como alcoolismo ou diabetes. E sexto, o mapa relacional: como essa família se comunica.
+
+***slide 4***
+
+Slide quatro, os símbolos. O familiograma descreve como os membros estão relacionados biológica e legalmente. Homem é um quadrado. Mulher é um círculo. A idade atual vai dentro do símbolo. O paciente índice, aquele que estamos atendendo, tem dupla linha, ou uma flecha. E quem já faleceu recebe um X sobre o símbolo, com a idade que tinha ao falecer.
+
+***slides 5 e 8***
+
+Slides cinco e oito, as uniões. Os símbolos são ligados por linhas. No casamento, o esposo fica à esquerda e a esposa à direita, e sobre a linha escreve-se a letra m e o ano do casamento. Uma linha oblíqua cortando a união indica separação. Duas linhas oblíquas indicam divórcio. E casais que vivem juntos sem casar, os convivientes, são ligados por uma linha tracejada.
+
+***slides 6 e 7***
+
+Slides seis e sete, os filhos. Eles descem da linha do casal e são colocados do mais velho, à esquerda, ao mais novo, à direita. Uma gestação em curso é um triângulo. Um aborto é um pequeno círculo preto. Gêmeos saem do mesmo ponto, formando um V. E o filho adotivo é ligado por uma linha tracejada.
+
+***extra***
+
+Agora um complemento que não está no slide, mas aparece muito. As linhas de relação. Três linhas paralelas indicam relação muito próxima. Uma linha em zigue-zague indica conflito. Uma linha tracejada indica relação distante. E uma linha cortada indica rompimento. As doenças importantes, como diabetes, hipertensão ou alcoolismo, são anotadas ao lado de cada pessoa.
+
+***slide 8***
+
+Ainda no slide oito: o contorno pontilhado. Ele marca o núcleo familiar, ou seja, quem mora sob o mesmo teto. No exemplo, o pai faleceu, e a mãe vive com os dois filhos. Por isso só eles ficam dentro do contorno.
+
+***slide 9***
+
+Slide nove, um familiograma completo de três gerações. Em cima, os avós: Nestor e Cristina, casados em mil novecentos e sessenta, ambos falecidos, e Julio e Mirta, casados em cinquenta e três. No meio, Romina e Máximo, os dois médicos, casados em noventa e cinco. Embaixo, os três filhos, do mais velho ao mais novo. E Cristina, de vinte e um anos, com Pablo, numa união de dois mil e dezoito, já tem a pequena Agustina. Repare na profissão ao lado de cada um: também é informação útil.
+
+***slide 10* · ⏸ exercício**
+
+Exercício. Slide dez, o caso do Juan. Juan tem quarenta e cinco anos, é diabético e casado há doze anos com Myriam. Têm três filhos: Sara, Melissa e Marcos, que foi adotado depois que o único irmão de Juan morreu num acidente junto com a esposa. Os pais de Juan, Raúl e Ana, estão vivos, e Ana é diabética. Juan discute muito com Melissa. Antes de ver o desenho, responda: como se representa Marcos, e como se marca a relação com Melissa? Pause e responda.
+
+***slide 10***
+
+Vamos montar juntos. Juan é o paciente índice, com dupla linha. Em cima, Raúl e Ana. Ao lado de Juan, o irmão e a cunhada, com X. Juan à esquerda, Myriam à direita, e os filhos do mais velho ao mais novo. Marcos é ligado por linha tracejada, porque é adotado. A relação com Melissa é uma linha em zigue-zague, de conflito. E o contorno pontilhado marca o núcleo familiar.
+
+***slide 11***
+
+Slide onze, o que você sempre deve lembrar. Coloque a data da elaboração. O familiograma não se faz na primeira consulta, porque depende de confiança e de informações que o paciente ainda não deu. Identifique o paciente e o familiar de maior empatia, aquele que podemos chamar quando for preciso. Anote idades atuais, patologias e relações. Marque o núcleo familiar. E nunca esqueça: no mínimo três gerações.
+
+
+## Parte 2
+
+***revisão* · ⏸ exercício**
+
+Revisão rápida do familiograma. Três perguntas. Quantas gerações, no mínimo? Pode ser feito na primeira consulta? E o que significam duas linhas oblíquas sobre um casamento? Pause e responda.
+
+***revisão***
+
+Respostas. Três gerações. Não, nunca na primeira consulta. E duas linhas oblíquas significam divórcio.
+
+***slide 12***
+
+Agora o segundo instrumento, a línea de vida. É um instrumento da medicina familiar que permite visualizar os eventos mais importantes ocorridos na família, em ordem cronológica. Para construir, pergunte ao paciente os marcos da família, coloque cada um com o seu ano, e destaque as crises.
+
+***slide 12***
+
+No exemplo do slide, Ricardo e Paulina se conhecem em sessenta e nove e casam em setenta e nove. Em oitenta há um aborto. Depois nascem Katy, Ricardo filho, Jorge e Macarena, e eles compram a casa própria. Em dois mil e dois vem a separação. Em dois mil e nove, Paulina recebe o diagnóstico de câncer, e em dois mil e dez recebe alta. Repare como uma linha de anos conta a história inteira da família.
+
+***slides 13 e 14***
+
+Os slides treze e catorze mostram que a mesma ideia serve para qualquer história. Um mostra as idades médias da vida de homens e mulheres: escola, primeiro emprego, sair de casa, casamento, aposentadoria. O outro mostra a vida de Theodore Roosevelt ano a ano. A lição é a mesma: organizar a vida no tempo revela padrões.
+
+***extra***
+
+Complemento importante. Existem dois tipos de crise familiar. As crises normativas são as esperadas, que fazem parte do ciclo vital: casamento, nascimento de um filho, filho que sai de casa, aposentadoria. As crises não normativas são as inesperadas: um acidente, uma doença grave, um divórcio, uma morte precoce, o desemprego. Na línea de vida do exemplo, o aborto, a separação e o câncer são crises não normativas.
+
+***extra* · ⏸ exercício**
+
+Exercício. Classifique cada uma: nascimento de Katy, separação, e diagnóstico de câncer. Normativa ou não normativa? Pause e responda.
+
+***extra***
+
+O nascimento de Katy é uma crise normativa, esperada no ciclo vital. A separação e o câncer são crises não normativas.
+
+***slides 19 e 20***
+
+Slides dezenove e vinte. A família, como todo sistema, tem três fins. Satisfazer as necessidades biopsicossociais dos seus membros em cada etapa do ciclo vital. Satisfazer as necessidades da comunidade da qual faz parte. E ser capaz de superar as crises, normativas e não normativas. Para isso, a família precisa de cinco coisas: comunicação, adaptação aos câmbios, transmitir afetos, regras flexíveis, e compartilhar os recursos. Guarde essas cinco, porque elas viram o Apgar.
+
+***slides 16 e 21***
+
+O Apgar familiar foi criado pelo doutor Smilkstein, nos Estados Unidos. Cada letra é um componente. A, adaptação: estou satisfeito com a ajuda que recebo nos meus problemas? P, participação, ligada à comunicação: discutimos juntos os assuntos de interesse comum? G, crescimento, ligado às regras: aceitam meus desejos de mudar? A, afeto: expressamos amor e tristeza? E R, resolução: estou satisfeito com o tempo, o espaço e o dinheiro que compartilhamos?
+
+***slides 15 a 17***
+
+Slides quinze a dezessete. O teste é individual e subjetivo: cada membro pode perceber a família de forma diferente. São cinco perguntas. Sempre vale dois, às vezes vale um, nunca vale zero. O total vai de zero a dez. De dez a oito, a família é funcional. De sete a quatro, disfuncional leve a moderada. De três a zero, disfunção grave. E atenção: o Apgar põe o médico na pista de uma disfunção, mas não a diagnostica.
+
+***slide 22***
+
+Slide vinte e dois, a conduta. De dez a oito: explorar o elemento débil e fortalecê-lo. De sete a quatro: trabalhar com psicoterapeuta. De três a zero: encaminhar a terapeuta familiar. E analise cada pergunta: se o total é sete, mas a pergunta dois foi respondida nunca, o problema está na comunicação, e é ela que devemos trabalhar.
+
+***slide 18* · ⏸ exercício**
+
+Exercício do slide. Uma mãe faz o Apgar e obtém quatro pontos. Na pergunta sobre a qualidade e a quantidade de tempo que compartilham juntos, ela responde não. Como se interpreta, e qual componente está afetado? Pause e responda.
+
+***slide 18***
+
+Quatro está na faixa de sete a quatro: disfuncional leve a moderada, com indicação de psicoterapeuta. E o tempo compartilhado é a resolução, a letra R.
+
+***extra* · ⏸ exercício**
+
+Agora um exercício novo, voltando ao caso do Juan. Melissa, de dezoito anos, quer entrar na universidade e se tornar independente. No Apgar, ela responde: adaptação, sempre. Participação, às vezes. Crescimento, nunca. Afeto, às vezes. Resolução, sempre. Qual é o total, a classificação e o elemento débil? Pause e responda.
+
+***extra***
+
+Dois, mais um, mais zero, mais um, mais dois: total seis. Disfuncional leve a moderada. O elemento débil é o crescimento, justamente o desejo de independência que a família não aceita. Repare como o Apgar e o familiograma contam a mesma história.
+
+
+## Parte 3
+
+***slide 23***
+
+O quarto instrumento é a escala de Holmes y Rahe. Um acontecimento estressante, interno ou externo, agudo ou crônico, gera situações às quais o organismo não consegue responder bem. A escala tem quarenta e três acontecimentos, cada um com uma pontuação, e só contam os que aconteceram nos últimos seis meses. Ela é um preditor do estresse.
+
+***slides 24 e 25***
+
+Slides vinte e quatro e vinte e cinco, a tabela. Você não precisa decorar os quarenta e três, mas guarde as âncoras. Morte do cônjuge, cem, o máximo. Divórcio, setenta e três. Separação, sessenta e três. Matrimônio, cinquenta. Perda do emprego, quarenta e sete. Gravidez, quarenta. E no fim da lista, férias, treze, Natal, doze, e pequenas violações da lei, onze. Repare: até eventos bons, como casamento e férias, geram estresse, porque toda mudança exige adaptação.
+
+***slide 26***
+
+Slide vinte e seis, a interpretação. De zero a cento e quarenta e nove, sem problemas. De cento e cinquenta a cento e noventa e nove, crise leve. De duzentos a duzentos e noventa e nove, crise moderada. Acima de trezentos, crise grave. E acima de duzentos pontos a pessoa está em risco de desenvolver transtornos psicossomáticos.
+
+***slide 27* · ⏸ exercício**
+
+Exercício do slide. Tania, em menos de seis meses: tem um empréstimo grande, discute muito com o marido, a filha mudou de colégio e começou uma nova etapa escolar, mudaram de casa, ela não dorme bem, e o pai está mal por um câncer de próstata. Ela soma cerca de duzentos e dez pontos. Em que classificação ela está? Pause e responda.
+
+***slide 27***
+
+Duzentos e dez está entre duzentos e duzentos e noventa e nove: crise moderada, com risco de transtornos psicossomáticos. Somando pela tabela dá perto de cento e noventa, mas na prova use o valor do enunciado.
+
+***extra* · ⏸ exercício**
+
+Um exercício novo. Carlos perdeu a esposa há três meses. Depois disso mudou de casa, passou a dormir mal e mudou a alimentação. Morte do cônjuge, cem. Mudança de residência, vinte. Hábitos de sono, dezesseis. Hábitos alimentares, quinze. Qual o total e a classificação? Pause e responda.
+
+***extra***
+
+Cem, mais vinte, mais dezesseis, mais quinze: cento e cinquenta e um. Crise leve. Repare que nem o pior evento da tabela, sozinho, passa de cento e cinquenta. É a soma das mudanças que pesa.
+
+***extra***
+
+Agora pense como médico. Um paciente chega com descontrole da diabetes. Com o tempo e o vínculo, você monta o familiograma e vê a estrutura e os conflitos. A línea de vida mostra quando vieram as crises. O Apgar mede como ele percebe a função da família. E a escala de Holmes mede o estresse dos últimos seis meses. Juntos, eles explicam o que o exame de sangue não mostra, e guiam a conduta: fortalecer o elemento débil, psicoterapeuta ou terapeuta familiar.
+
+***extra***
+
+As pegadinhas mais comuns da prova. O familiograma não se faz na primeira consulta. São no mínimo três gerações. O esposo fica à esquerda, e o filho mais velho também. O Apgar não diagnostica, só orienta. O Apgar é individual. Sempre dois, às vezes um, nunca zero. Holmes conta só os últimos seis meses. E acima de duzentos, risco psicossomático.
+
+***extra* · ⏸ exercício**
+
+Agora você é o professor. Explique em voz alta, em um minuto, para um colega imaginário: para que serve cada um dos quatro instrumentos, e qual é o número mais importante de cada um. Pause e explique.
+
+***slide 28***
+
+Para fechar: familiograma, três gerações e nunca na primeira consulta. Línea de vida, os eventos e as crises no tempo. Apgar, dois, um, zero, com cortes em oito e em quatro. Holmes, seis meses, com cortes em cento e cinquenta, duzentos e trezentos. Como diz o último slide: o único modo de fazer um grande trabalho é amar o que você faz. Boa prova!
