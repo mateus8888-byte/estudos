@@ -1,0 +1,289 @@
+<title>Painel de Produção Bloco 1</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Nunito+Sans:wght@400;600;800&family=JetBrains+Mono:wght@500;700&display=swap">
+<style>
+/* Layout: painel de produção em uma coluna, como uma ordem do dia de set de filmagem: configurações → personagens → cenas em ordem (cada cena = fala, imagens, vídeos com botão copiar) → áudio por voz */
+:root{
+  --bg:#f2f4f3; --card:#ffffff; --ink:#17201d; --muted:#5a6762; --line:#d6ddd9; --soft:#e9f1ed;
+  --lia:#c2185b; --lia-bg:#fde9f1; --theo:#3f51c4; --theo-bg:#e8ebfb; --rosa:#1d7d55; --rosa-bg:#e4f4ec;
+  --img:#a35a00; --img-bg:#fff3e1; --vid:#5b3fb5; --vid-bg:#efeafd; --ok:#1d7d55; --on:#ffffff;
+  --display:"Rubik","Segoe UI",system-ui,sans-serif; --body:"Nunito Sans","Segoe UI",system-ui,sans-serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1513; --card:#18201d; --ink:#e6edea; --muted:#9db0a8; --line:#2b3833; --soft:#1c2925;
+  --lia:#ff6fa6; --lia-bg:#3a1c29; --theo:#8f9cff; --theo-bg:#20264a; --rosa:#5fd6a1; --rosa-bg:#17352a;
+  --img:#ffb54d; --img-bg:#33270f; --vid:#b8a2ff; --vid-bg:#29214a; --ok:#5fd6a1; --on:#0f1513; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1513; --card:#18201d; --ink:#e6edea; --muted:#9db0a8; --line:#2b3833; --soft:#1c2925;
+  --lia:#ff6fa6; --lia-bg:#3a1c29; --theo:#8f9cff; --theo-bg:#20264a; --rosa:#5fd6a1; --rosa-bg:#17352a;
+  --img:#ffb54d; --img-bg:#33270f; --vid:#b8a2ff; --vid-bg:#29214a; --ok:#5fd6a1; --on:#0f1513; color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font:16px/1.55 var(--body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+main{max-width:860px;margin:0 auto;padding-block:24px 64px;display:grid;gap:22px}
+h1{font:800 clamp(1.7rem,5vw,2.5rem)/1.1 var(--display);margin:0;text-wrap:balance}
+h2{font:800 1.35rem/1.2 var(--display);margin:0}
+h3{font:700 1.05rem/1.3 var(--display);margin:0}
+p{margin:0}
+.muted{color:var(--muted)}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;gap:12px;min-width:0}
+.steps{display:grid;gap:8px;counter-reset:s;padding:0;margin:0;list-style:none}
+.steps li{counter-increment:s;display:grid;grid-template-columns:30px 1fr;gap:10px;align-items:start}
+.steps li::before{content:counter(s);font:800 .9rem var(--mono);width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--bg);display:grid;place-items:center}
+.cfg{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.cfg .panel{border-left:5px solid var(--img)}
+.cfg .panel.v{border-left-color:var(--vid)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.95rem}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:800}
+.sticky{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:8px;display:grid;gap:6px}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+.prog{height:8px;border-radius:99px;background:var(--soft);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.tabs{display:flex;flex-wrap:wrap;gap:6px}
+.tab{font:700 .85rem var(--body);padding:6px 12px;border-radius:99px;border:1.5px solid var(--line);background:var(--card);color:var(--ink);text-decoration:none}
+.scene{display:grid;gap:12px}
+.shead{display:flex;flex-wrap:wrap;gap:8px;align-items:baseline;justify-content:space-between}
+.sid{font:800 .8rem var(--mono);background:var(--ink);color:var(--bg);padding:3px 8px;border-radius:6px}
+.slide{font:700 .78rem var(--mono);color:var(--muted)}
+.bubble{border-radius:14px;padding:10px 14px;display:grid;gap:4px;max-width:92%}
+.bubble .who{font:800 .72rem/1 var(--body);letter-spacing:.1em;text-transform:uppercase}
+.b-LIA{background:var(--lia-bg);justify-self:start}.b-LIA .who{color:var(--lia)}
+.b-THEO{background:var(--theo-bg);justify-self:end}.b-THEO .who{color:var(--theo)}
+.b-ROSA{background:var(--rosa-bg);justify-self:start}.b-ROSA .who{color:var(--rosa)}
+.asset{border-radius:12px;padding:12px;display:grid;gap:8px;min-width:0}
+.asset.i{background:var(--img-bg)} .asset.v{background:var(--vid-bg)}
+.arow{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.fname{font:700 .9rem var(--mono);word-break:break-all}
+.kind{font:800 .7rem var(--body);letter-spacing:.1em;text-transform:uppercase}
+.asset.i .kind{color:var(--img)} .asset.v .kind{color:var(--vid)}
+.style{font:700 .78rem var(--body);padding:2px 8px;border-radius:99px;background:var(--card);border:1px solid var(--line)}
+.ptxt{font-size:.93rem;white-space:pre-wrap;word-break:break-word;background:var(--card);border-radius:8px;padding:8px 10px;border:1px dashed var(--line)}
+.btns{display:flex;flex-wrap:wrap;gap:6px}
+button{font:800 .85rem var(--body);padding:8px 12px;border-radius:10px;border:0;cursor:pointer;background:var(--ink);color:var(--bg)}
+button.ghost{background:var(--card);color:var(--ink);border:1.5px solid var(--line)}
+button.done{background:var(--ok);color:var(--on)}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid var(--lia);outline-offset:2px}
+label.chk{display:flex;gap:8px;align-items:center;font-weight:700;font-size:.9rem;cursor:pointer}
+label.chk input{width:18px;height:18px;accent-color:var(--ok)}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:99px;font-weight:800;opacity:0;transition:opacity .2s;pointer-events:none;z-index:20}
+.toast.on{opacity:1}
+.voice{border-left:5px solid var(--lia)}
+.voice.THEO{border-left-color:var(--theo)} .voice.ROSA{border-left-color:var(--rosa)}
+.warn{background:var(--img-bg);border-radius:12px;padding:12px 14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+
+<main>
+<header style="display:grid;gap:8px">
+  <span class="slide">ATENCIÓN A LA FAMILIA · IMERSÃO · BLOCO 1 DE 4 · ~10 MIN</span>
+  <h1>Painel de produção do Bloco 1</h1>
+  <p class="muted">Tudo em ordem, de cima para baixo. Toque em <b>Copiar</b>, cole no Flow ou no app de voz, gere, salve com o <b>nome do arquivo</b> mostrado e marque como feito. Seu progresso fica salvo neste aparelho.</p>
+</header>
+
+<section class="panel">
+  <h2>Como fazer, passo a passo</h2>
+  <ol class="steps">
+    <li><span><b>Personagens primeiro.</b> Gere as 3 fichas de personagem (abaixo). Elas viram "Elementos" no Flow para a professora, o aluno e a médica terem sempre o mesmo rosto.</span></li>
+    <li><span><b>Imagens das cenas.</b> Nano Banana Pro, 16:9, x2. Salve as duas versões como <code>-a</code> e <code>-b</code>. Eu escolho a melhor e aproveito a outra como extra.</span></li>
+    <li><span><b>Vídeos das cenas.</b> Modo Elementos com o personagem da cena, 16:9, 10 s. Salve com o nome mostrado.</span></li>
+    <li><span><b>Áudio por voz.</b> No fim desta página, cada voz (Lia, Theo, Rosa) tem o texto pronto e numerado. Gere cada voz separado, com uma voz diferente para cada personagem.</span></li>
+    <li><span><b>Pasta no Google Drive:</b> <code>imersao-familia-bloco-1</code>, com tudo dentro. Me avise no chat e eu monto a aula.</span></li>
+  </ol>
+</section>
+
+<section class="cfg">
+  <div class="panel"><h3>Configuração · Imagem</h3><dl class="kv"><dt>Modo</dt><dd>Imagem</dd><dt>Formato</dt><dd>16:9</dd><dt>Modelo</dt><dd>Nano Banana Pro</dd><dt>Quantidade</dt><dd>x2</dd><dt>Custo</dt><dd>0 créditos</dd></dl></div>
+  <div class="panel v"><h3>Configuração · Vídeo</h3><dl class="kv"><dt>Modo</dt><dd>Vídeo · Elementos</dd><dt>Formato</dt><dd>16:9</dd><dt>Modelo</dt><dd>Omni 1.1 Flash</dd><dt>Resolução</dt><dd>720p (se o custo for o mesmo; senão 360p)</dd><dt>Duração</dt><dd>10 s · x1</dd><dt>Neste bloco</dt><dd id="vidcount"></dd></dl></div>
+</section>
+
+<section class="panel">
+  <h2>Prompt negativo (vale para tudo)</h2>
+  <p class="muted">Se o Flow não tiver um campo próprio, ele já vai junto quando você toca em Copiar em cada prompt.</p>
+  <div class="ptxt" id="neg"></div>
+</section>
+
+<div class="sticky">
+  <div class="prog" aria-hidden="true"><i id="pbar"></i></div>
+  <div class="row muted" style="font-size:.85rem" id="ptext"></div>
+  <nav class="tabs" aria-label="Seções"><a class="tab" href="#personagens">Personagens</a><a class="tab" href="#cenas">Cenas</a><a class="tab" href="#audio">Áudio por voz</a><a class="tab" href="#extras">Extras</a></nav>
+</div>
+
+<section id="personagens" style="display:grid;gap:12px"><h2>1 · Personagens (gere primeiro)</h2><div id="chars" style="display:grid;gap:12px"></div></section>
+<section id="cenas" style="display:grid;gap:14px"><h2>2 · Cenas em ordem</h2><div id="scenes" style="display:grid;gap:14px"></div></section>
+<section id="audio" style="display:grid;gap:12px"><h2>3 · Áudio por voz</h2>
+  <p class="muted">Cada parágrafo é uma fala, na ordem da aula. Não junte parágrafos e não apague as linhas em branco: é assim que eu encaixo as vozes no lugar certo. Se o app limitar o tamanho, gere por partes (Parte 1, Parte 2) e mande todas.</p>
+  <div id="voices" style="display:grid;gap:12px"></div></section>
+<section id="extras" style="display:grid;gap:12px"><h2>4 · Imagens extras (opcional, imagem é grátis)</h2>
+  <p class="muted">Quanto mais variedade, mais viva fica a aula. Gere se tiver tempo.</p><div id="extra" style="display:grid;gap:12px"></div></section>
+<section class="warn"><b>Para monetizar no YouTube ou TikTok:</b> use as suas imagens, vídeos e o roteiro novo. Não publique páginas do slide da professora nem figuras de livros, que têm direitos autorais.</section>
+</main>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+const NEG='Evitar: texto, letras, números, legendas, logotipos, marca d\'água, mãos deformadas, dedos extras, rostos distorcidos, olhos estranhos, membros duplicados, sangue, nudez, aparência de plástico, imagem borrada, baixa resolução, pessoas olhando fixamente para a câmera sem motivo.';
+const ST={
+ real:'Fotografia ultra-realista 4K, luz natural suave, lente 35 mm, profundidade de campo rasa, paleta verde-sálvia, branco quente e toques de magenta.',
+ pixar:'Animação 3D estilo cinema de animação, personagens expressivos e amigáveis, cores suaves verde-sálvia e magenta, iluminação de estúdio macia.',
+ hq:'Estilo história em quadrinhos moderna, traço limpo, cores chapadas verde-sálvia, magenta e creme, composição de quadro de HQ.',
+ lousa:'Ilustração de lousa verde escolar com giz branco e colorido, desenhos à mão simples e claros, sem texto escrito.',
+ ugc:'Estilo vídeo UGC de celular, câmera na mão, luz ambiente real, sensação espontânea de bastidor.',
+};
+const STN={real:'Ultra-realista 4K',pixar:'Animação 3D',hq:'HQ',lousa:'Lousa',ugc:'UGC celular'};
+const CHARS=[
+ ['b1-p-lia.png','Lia, a professora','Ficha de personagem: professora de medicina familiar chamada Lia, mulher latina de cerca de 40 anos, cabelo cacheado castanho preso, óculos de armação fina, jaleco branco aberto sobre blusa verde-sálvia, sorriso acolhedor. Mesma pessoa em 3 vistas lado a lado: frente, perfil e três quartos, fundo neutro claro.','real'],
+ ['b1-p-theo.png','Theo, o aluno','Ficha de personagem: estudante de medicina chamado Theo, homem latino de 22 anos, cabelo curto escuro, moletom azul, mochila e caderno na mão, expressão curiosa. Mesma pessoa em 3 vistas lado a lado: frente, perfil e três quartos, fundo neutro claro.','real'],
+ ['b1-p-rosa.png','Dra. Rosa, médica de família','Ficha de personagem: médica de família chamada Rosa, mulher latina de cerca de 55 anos, cabelo grisalho curto, estetoscópio no pescoço, jaleco com crachá sem texto legível, olhar experiente e gentil. Mesma pessoa em 3 vistas lado a lado: frente, perfil e três quartos, fundo neutro claro.','real'],
+];
+/* cenas: [id, slide, título, falas, imagens[[arquivo,estilo,prompt]], vídeos[[arquivo,personagem,prompt]]] */
+const SC=[
+['c01','Abertura','Boas-vindas na sala de aula',
+ [['LIA','Oi! Eu sou a professora Lia. Hoje você não vai só assistir: vai montar famílias comigo no quadro até conseguir fazer sozinho. E o Theo vai estudar junto com a gente.'],
+  ['THEO','Oi! Tenho prova de Atención a la Familia e confesso: familiograma me dá um nó na cabeça.'],
+  ['LIA','Então vamos desatar esse nó. Quando eu fizer uma pergunta, pause se quiser e responda em voz alta. Na terceira vez que você assistir, vai responder antes do Theo.']],
+ [['b1-c01-i1','real','Sala de aula pequena e moderna de faculdade de medicina, a professora Lia em pé ao lado de um grande quadro branco vazio, o aluno Theo sentado na primeira fila com caderno aberto, luz da manhã entrando pela janela.']],
+ [['b1-c01-v1','Lia + Theo','A professora Lia entra na sala, coloca a pasta na mesa, sorri e acena para o aluno Theo, que abre o caderno. Câmera em leve movimento lateral.']]],
+['c02','Contexto','O paciente não chega sozinho',
+ [['LIA','Primeira ideia. Na medicina familiar, o paciente nunca chega sozinho. Junto com ele entram no consultório o pai diabético, o divórcio dos pais, o filho que saiu de casa, a mãe que precisa de cuidados.'],
+  ['ROSA','No meu posto de saúde é assim todo dia. Tem paciente cuja pressão só sobe quando o filho volta a morar em casa.'],
+  ['LIA','Por isso a medicina familiar usa quatro instrumentos: o familiograma, a línea de vida, o Apgar familiar e a escala de Holmes y Rahe. Este bloco é todo do primeiro.']],
+ [['b1-c02-i1','real','Consultório de atenção primária: um paciente de meia-idade sentado diante da Dra. Rosa; atrás dele, silhuetas translúcidas dos familiares, como se estivessem presentes na consulta.'],
+  ['b1-c02-i2','pixar','Quatro ícones grandes flutuando sobre uma mesa: uma árvore genealógica de formas geométricas, uma linha do tempo, um coração com cinco pétalas e um medidor de pressão, todos sem texto.']],
+ [['b1-c02-v1','Rosa','A Dra. Rosa conversa com um paciente no consultório, ele gesticula preocupado, ela escuta com atenção e anota. Câmera aproxima devagar.']]],
+['c03','Slide 2','O que é o familiograma',
+ [['THEO','Tá, mas o que é o familiograma, exatamente?'],
+  ['LIA','O familiograma, também chamado genograma, é um instrumento da medicina familiar que dá uma visão rápida do entorno do paciente. É um desenho que mostra como os membros da família estão relacionados, biológica e legalmente, de uma geração para a seguinte. E ele ajuda a criar vínculo: o paciente percebe que você quer conhecer a vida dele.']],
+ [['b1-c03-i1','real','Close das mãos da professora Lia desenhando com caneta quadrados e círculos ligados por linhas num papel sobre a mesa, vista de cima.'],
+  ['b1-c03-i2','lousa','Lousa verde com um diagrama de família desenhado em giz: quadrados e círculos ligados por linhas em três níveis.']],
+ [['b1-c03-v1','Lia','A professora Lia desenha no quadro branco quadrados e círculos ligados por linhas, vira para a câmera e explica com as mãos. Plano médio.']]],
+['c04','Slide 2','Horizontal, vertical e 3 gerações',
+ [['LIA','Ele se lê de duas formas. Na horizontal, você vê o contexto de agora: quem vive com quem, quem briga com quem. Na vertical, você atravessa as gerações: avós, pais e filhos.'],
+  ['THEO','Então tem que ter as três gerações?'],
+  ['LIA','No mínimo três gerações, e os acontecimentos críticos da história da família. Essa é a primeira regra de prova.']],
+ [['b1-c04-i1','real','Três gerações de uma família latina reunidas no quintal: avós sentados, pais em pé atrás e uma criança no colo da avó, luz de fim de tarde.']],
+ [['b1-c04-v1','—','Família de três gerações caminha devagar num parque arborizado, a câmera acompanha de lado em travelling suave.']]],
+['c05','Slide 3','As 6 funções',
+ [['LIA','Para que serve o familiograma? Primeiro, conhecer a estrutura da família. Segundo, as relações entre os membros. Terceiro, ter uma visão rápida do ambiente psicossocial.'],
+  ['LIA','Quarto, reconhecer patologias da estrutura familiar. Quinto, saber em que etapa do ciclo vital estão a família e o paciente, e ver pautas que se repetem entre gerações, como diabetes ou alcoolismo. E sexto, o mapa relacional: como essa família se comunica.'],
+  ['THEO','Estrutura, relações, psicossocial, patologias, ciclo vital e mapa relacional. Seis.']],
+ [['b1-c05-i1','real','Família reunida à mesa de jantar conversando animadamente, com um adolescente um pouco afastado, pensativo, olhando o celular.'],
+  ['b1-c05-i2','hq','Seis quadros de HQ em grade mostrando: uma casa, duas pessoas de mãos dadas, uma comunidade de bairro, um remédio, uma linha do tempo com bebê e idoso, e balões de conversa vazios.']],
+ []],
+['c06','Slides 4 e 7','Símbolos básicos',
+ [['LIA','Agora os símbolos. Homem é um quadrado. Mulher é um círculo. Dentro do símbolo vai a idade atual. Um quadrado com quarenta e cinco dentro é um homem de quarenta e cinco anos.'],
+  ['LIA','O paciente que estamos atendendo, o paciente índice, aparece com dupla linha, ou com uma flecha. E quem já faleceu recebe um X sobre o símbolo, com a idade que tinha quando morreu.']],
+ [['b1-c06-i1','lousa','Lousa verde com um quadrado grande e um círculo grande desenhados a giz lado a lado, e ao lado um quadrado com contorno duplo e outro quadrado cortado por um X.']],
+ []],
+['c07','Exercício','Paciente de 52 anos',
+ [['LIA','Exercício. Como você desenharia uma mulher de cinquenta e dois anos que é a paciente índice? Pause se quiser e responda.'],
+  ['THEO','Um círculo com cinquenta e dois dentro.'],
+  ['LIA','Quase! Faltou a dupla linha em volta, porque ela é a paciente índice. E o avô dela, que morreu aos oitenta?'],
+  ['THEO','Um quadrado com um X por cima e oitenta dentro.'],
+  ['LIA','Perfeito.']],
+ [['b1-c07-i1','real','Mulher latina de cerca de cinquenta anos sentada na maca do consultório, expressão serena, a Dra. Rosa ao lado com prancheta.']],
+ [['b1-c07-v1','Theo','O aluno Theo pensa com a caneta no queixo, depois desenha no caderno e levanta o olhar satisfeito. Close médio.']]],
+['c08','Slides 5 e 8','Casamento, separação, divórcio',
+ [['LIA','Agora as uniões. No casamento, o esposo fica sempre à esquerda e a esposa à direita, ligados por uma linha contínua por baixo. Sobre essa linha escreve-se a letra m e o ano. Por exemplo, m. mil novecentos e noventa e cinco.'],
+  ['LIA','Se o casal se separa, uma linha oblíqua corta a linha do casamento. Se divorcia, são duas linhas oblíquas.'],
+  ['THEO','Um traço, separou. Dois traços, acabou de vez.'],
+  ['LIA','Isso. E o casal que vive junto sem casar, os convivientes, é ligado com uma linha tracejada, em segmentos.']],
+ [['b1-c08-i1','real','Casal latino em cerimônia de casamento simples no cartório, trocando alianças.'],
+  ['b1-c08-i2','real','Casal sentado em lados opostos de um sofá, distantes, expressão triste, luz fria da tarde.'],
+  ['b1-c08-i3','real','Casal jovem arrumando caixas de mudança num apartamento novo, morando juntos, sorrindo.']],
+ [['b1-c08-v1','—','Close de mãos trocando alianças numa cerimônia simples, leve aproximação da câmera.']]],
+['c09','Exercício','Pedro e Lucía',
+ [['LIA','Exercício com variações. Diga o símbolo de cada situação. Pedro e Lucía casaram em dois mil e dez. Depois se separaram, mas não se divorciaram. Depois saiu o divórcio. E agora Lucía vive com Jorge, sem casar. Pause se quiser.'],
+  ['THEO','Linha contínua com m. dois mil e dez. Depois um traço. Depois… um traço também?'],
+  ['LIA','Errado! O divórcio são dois traços. Um traço é só a separação.'],
+  ['THEO','Ah, verdade. E Lucía com Jorge é linha tracejada.'],
+  ['LIA','Isso mesmo.']],
+ [['b1-c09-i1','hq','Quatro quadros de HQ em sequência mostrando o mesmo casal: casamento feliz, discussão em casa, cada um saindo por uma porta diferente, e a mulher sorrindo ao lado de um novo companheiro.']],
+ []],
+['c10','Slides 6 e 7','Filhos e símbolos especiais',
+ [['LIA','Os filhos descem da linha do casal e são colocados do mais velho, à esquerda, ao mais novo, à direita.'],
+  ['THEO','Primeiro a nascer, primeiro a ser lido.'],
+  ['LIA','Exatamente. Agora os especiais. Gestação em curso é um triângulo. Aborto é um pequeno círculo preto. Gêmeos saem do mesmo ponto, formando um V. E o filho adotivo é ligado por uma linha tracejada.']],
+ [['b1-c10-i1','real','Pais com três filhos de idades diferentes alinhados do mais velho ao mais novo, a mãe grávida, todos sorrindo na sala de casa.'],
+  ['b1-c10-i2','real','Dois irmãos gêmeos idênticos de cerca de cinco anos brincando juntos no quintal.']],
+ [['b1-c10-v1','—','Duas crianças gêmeas correm juntas num quintal ensolarado, câmera lenta.']]],
+['c11','Exercício','A família grávida',
+ [['ROSA','Atendi uma família assim ontem: um casal com um filho de quinze anos, uma filha de doze, e a mãe está grávida. Como fica o desenho?'],
+  ['THEO','O menino de quinze à esquerda, a menina de doze no meio, e o triângulo da gestação à direita, todos descendo da linha do casal.'],
+  ['ROSA','Muito bem. E se os dois mais velhos fossem gêmeos?'],
+  ['THEO','Saem do mesmo ponto, em V.']],
+ [['b1-c11-i1','pixar','Casal com filho adolescente e filha pré-adolescente na sala de espera de um posto de saúde, a mãe com barriga de grávida, clima acolhedor.']],
+ [['b1-c11-v1','Rosa','A Dra. Rosa recebe uma família no consultório, aperta a mão do pai e sorri para as crianças. Plano médio.']]],
+['c12','Complemento','Linhas de relação',
+ [['LIA','Um complemento que não está no slide, mas ajuda muito. Três linhas paralelas mostram uma relação muito próxima. Uma linha em zigue-zague mostra conflito. Uma linha tracejada entre duas pessoas mostra relação distante. E uma linha cortada mostra rompimento.'],
+  ['LIA','As doenças importantes, como diabetes, hipertensão ou alcoolismo, são anotadas ao lado de cada pessoa.']],
+ [['b1-c12-i1','hq','Quatro pares de pessoas em quadros de HQ: um par abraçado, um par discutindo com raios entre eles, um par de costas um para o outro e um par separado por uma porta fechada.']],
+ []],
+['c13','Slide 8','Núcleo familiar',
+ [['LIA','Por último, o núcleo familiar. Um contorno pontilhado envolve as pessoas que vivem sob o mesmo teto. No exemplo do slide, o pai faleceu, e a mãe vive com os dois filhos. O pai fica fora do contorno, a mãe e os filhos ficam dentro.']],
+ [['b1-c13-i1','real','Fachada de uma casa simples à noite com luz acesa nas janelas, sensação de lar.']],
+ [['b1-c13-v1','—','Plano aberto de uma casa ao anoitecer, as luzes das janelas se acendem uma de cada vez.']]],
+['c14','Slide 9','Exemplo de 3 gerações',
+ [['LIA','Agora o exemplo completo do slide nove. Em cima, os avós: Nestor e Cristina, casados em mil novecentos e sessenta, ambos falecidos, e Julio e Mirta, casados em cinquenta e três.'],
+  ['LIA','No meio, Romina e Máximo, os dois médicos, casados em noventa e cinco. Embaixo, os filhos do mais velho ao mais novo: Cristina, Roma e Facundo. E Cristina vive com Pablo, numa união de dois mil e dezoito, e já tem a pequena Agustina.'],
+  ['THEO','E até a profissão de cada um aparece.']],
+ [['b1-c14-i1','real','Mural de fotos antigas e novas de uma família de três gerações pendurado na parede de uma sala, molduras variadas, luz quente.']],
+ []],
+['c15','Exercício','O caso da Ana',
+ [['ROSA','Último exercício. Ana, de trinta anos, é a paciente. Mora com a mãe, Marta, de cinquenta e oito, que é viúva: o pai, Luis, morreu aos sessenta. Ana tem um irmão mais velho, Diego, que mora em outra cidade e com quem ela quase não fala. Pause se quiser e desenhe.'],
+  ['THEO','Luis à esquerda, quadrado com X e sessenta. Marta à direita, círculo com cinquenta e oito. Embaixo, Diego à esquerda, por ser o mais velho, e Ana à direita, com dupla linha.'],
+  ['LIA','E a relação entre os irmãos?'],
+  ['THEO','Linha tracejada, distante. E o contorno pontilhado só em volta de Ana e da mãe, que moram juntas.'],
+  ['LIA','Perfeito, Theo.']],
+ [['b1-c15-i1','real','Mulher de cerca de trinta anos e a mãe idosa tomando café juntas na cozinha de casa, luz da manhã.']],
+ [['b1-c15-v1','Theo','O aluno Theo desenha no quadro branco um diagrama de quadrados e círculos, a professora Lia ao lado aponta e sorri aprovando.']]],
+['c16','Fechamento','Fim do bloco 1',
+ [['LIA','Fim do primeiro bloco. Agora você já sabe desenhar uma família inteira.'],
+  ['THEO','E no próximo bloco?'],
+  ['LIA','No próximo, a gente pratica com o caso do Juan, vê as regras de elaboração e a línea de vida. Até lá!']],
+ [['b1-c16-i1','pixar','A professora Lia e o aluno Theo batendo as mãos num cumprimento de comemoração em frente a um quadro cheio de diagramas de família.']],
+ [['b1-c16-v1','Lia + Theo','A professora Lia e o aluno Theo se despedem acenando para a câmera em frente ao quadro, sorrindo.']]],
+];
+const EXTRA=[
+ ['b1-x01','ugc','Selfie de um estudante de medicina estudando à noite na mesa do quarto com caderno de anotações cheio de diagramas, luminária acesa.'],
+ ['b1-x02','pixar','Gato fofo de óculos sentado sobre uma pilha de livros de medicina, olhando curioso para um caderno com quadrados e círculos.'],
+ ['b1-x03','hq','Quadro de HQ de um aluno com uma lâmpada acesa sobre a cabeça, expressão de quem entendeu.'],
+ ['b1-x04','real','Corredor de posto de saúde de atenção primária com famílias aguardando atendimento.'],
+ ['b1-x05','lousa','Lousa verde com uma árvore de família desenhada a giz com três níveis.'],
+ ['b1-x06','real','Médica de família visitando uma casa simples, conversando com uma família na varanda.'],
+ ['b1-x07','pixar','Avó e neto montando juntos um quebra-cabeça em forma de árvore genealógica.'],
+ ['b1-x08','ugc','Mão segurando um celular mostrando foto de família no aplicativo de galeria, fundo de sala de estudos.'],
+];
+/* ---------- render ---------- */
+const KEY='painel-bloco1-v1';let done={};try{done=JSON.parse(localStorage.getItem(KEY)||'{}')}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(done))}catch(e){}};
+const $=s=>document.querySelector(s);const esc=s=>s.replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));
+const full=(p,st)=>`${p}\n\nEstilo: ${ST[st]} Formato 16:9.\n\n${NEG}`;
+const vfull=(p,who)=>`${who&&who!=='—'?'Personagens (Elementos): '+who+'. ':''}${p}\n\nEstilo: ${ST.real} Movimento de câmera suave, 10 segundos, sem som. Formato 16:9.\n\n${NEG}`;
+$('#neg').textContent=NEG;
+const items=[];
+function assetCard(kind,file,label,text,tag){items.push(file);const id=file;
+  return `<div class="asset ${kind}"><div class="arow"><span class="kind">${kind==='i'?'Imagem':'Vídeo'} ${tag?'· <span class="style">'+tag+'</span>':''}</span><span class="fname">${file}${kind==='i'?'-a.png / -b.png':'.mp4'}</span></div>
+  <div class="ptxt">${esc(label)}</div><div class="btns"><button data-copy="${encodeURIComponent(text)}">Copiar prompt</button><button class="ghost" data-copy="${encodeURIComponent(file)}">Copiar nome</button><label class="chk"><input type="checkbox" data-done="${id}" ${done[id]?'checked':''}> Feito</label></div></div>`}
+$('#chars').innerHTML=CHARS.map(([f,n,p,st])=>`<div class="panel"><h3>${n}</h3>${assetCard('i',f.replace('.png',''),p,full(p,st),STN[st])}</div>`).join('');
+$('#scenes').innerHTML=SC.map(([id,sl,t,lines,imgs,vids])=>`<article class="panel scene" id="${id}"><div class="shead"><span><span class="sid">${id.toUpperCase()}</span> <h3 style="display:inline">${t}</h3></span><span class="slide">${sl}</span></div>
+ ${lines.map(([w,tx])=>`<div class="bubble b-${w}"><span class="who">${w==='LIA'?'Prof. Lia':w==='THEO'?'Theo':'Dra. Rosa'}</span><p>${esc(tx)}</p></div>`).join('')}
+ ${imgs.map(([f,st,p])=>assetCard('i',f,p,full(p,st),STN[st])).join('')}
+ ${vids.map(([f,who,p])=>assetCard('v',f,(who!=='—'?'['+who+'] ':'')+p,vfull(p,who),'10 s')).join('')}</article>`).join('');
+$('#extra').innerHTML=EXTRA.map(([f,st,p])=>assetCard('i',f,p,full(p,st),STN[st])).join('');
+$('#vidcount').textContent=SC.reduce((a,s)=>a+s[5].length,0)+' vídeos · '+SC.reduce((a,s)=>a+s[5].length,0)*7+' créditos (a 7 cada)';
+/* vozes */
+const VN={LIA:'Prof. Lia (voz feminina, calorosa, didática)',THEO:'Theo (voz masculina jovem, curiosa)',ROSA:'Dra. Rosa (voz feminina madura, serena)'};
+$('#voices').innerHTML=['LIA','THEO','ROSA'].map(w=>{let n=0;const paras=[];SC.forEach(([id,,,lines])=>lines.forEach(([s,t])=>{if(s===w){n++;paras.push(t)}}));
+  const parts=[];let cur=[],len=0;paras.forEach(p=>{if(len+p.length>3800&&cur.length){parts.push(cur);cur=[];len=0}cur.push(p);len+=p.length+2});if(cur.length)parts.push(cur);
+  items.push('voz-'+w);
+  return `<div class="panel voice ${w}"><h3>${VN[w]}</h3><p class="muted">${n} falas · arquivo: <span class="fname">b1-voz-${w.toLowerCase()}${parts.length>1?'-parte1, -parte2…':''}.mp3</span></p>
+   <div class="btns">${parts.map((p,i)=>`<button data-copy="${encodeURIComponent(p.join('\n\n'))}">Copiar ${parts.length>1?'parte '+(i+1):'texto'} (${p.length} falas)</button>`).join('')}<label class="chk"><input type="checkbox" data-done="voz-${w}" ${done['voz-'+w]?'checked':''}> Feito</label></div>
+   <details><summary class="muted">Ver o texto</summary><div class="ptxt" style="margin-top:8px">${esc(paras.join('\n\n'))}</div></details></div>`}).join('');
+/* interação */
+const toast=t=>{const e=$('#toast');e.textContent=t;e.classList.add('on');clearTimeout(e._t);e._t=setTimeout(()=>e.classList.remove('on'),1400)};
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-copy]');if(!b)return;const txt=decodeURIComponent(b.dataset.copy);
+  try{await navigator.clipboard.writeText(txt);b.classList.add('done');toast('Copiado')}catch(err){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');toast('Copiado')}catch(x){toast('Segure e copie o texto')}ta.remove()}});
+document.addEventListener('change',e=>{const c=e.target.closest('[data-done]');if(!c)return;done[c.dataset.done]=c.checked;save();prog()});
+function prog(){const tot=items.length,ok=items.filter(i=>done[i]).length;$('#pbar').style.width=ok/tot*100+'%';$('#ptext').textContent=`${ok} de ${tot} itens feitos`}
+prog();
+</script>
